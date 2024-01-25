@@ -29,6 +29,7 @@ public class C02_Login extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// 1.요청분석
 		// => request 의 Parameter 처리
+		// => id, password 처리
 		request.setCharacterEncoding("UTF-8");
 		String id = request.getParameter("id").trim();
 		String password = request.getParameter("password").trim();		

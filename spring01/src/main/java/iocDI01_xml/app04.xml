@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!--  1   ) 고전적 방법 (직접 new : 소스 재컴파일)
+      => 기본생성자 호출                              -->
+	<bean id="sstv" class="iocDI01_xml.SsTVsi" lazy-init="true" />
+	
+<!-- 	 2) IOC/DI -> 생성자 주임 -->
+	<bean id="lgtv" class="iocDI01_xml.LgTVsi" lazy-init="true">
+		<constructor-arg name="color" value="Gold" />
+		<constructor-arg name="price" value="1234500" />
+		<constructor-arg index="0" ref="spb"/>
+	
+	</bean>
+	<bean id="spa" class="iocDI01_xml.SpeakerA" lazy-init="true"/>
+	<bean id="spb" class="iocDI01_xml.SpeakerB" lazy-init="true"/>
+	
+<!-- 3) IOC/DI -> setter 주입 -->
+<!-- => setter 메서드는 <bean> 생성 직후 컨테이너가 자동 호출  -->
+
+    
+	<bean id="aitv" class="iocDI01_xml.AiTVsi" lazy-init="true">
+		<property name="speaker" ref="spa" />
+		<property name="color" value="Silver" />
+		<property name="price" value="789000" />
+	
+	
+	
+	
+	
+	</bean>
+
+</beans>

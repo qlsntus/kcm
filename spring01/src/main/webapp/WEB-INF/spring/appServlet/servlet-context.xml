@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<context:component-scan base-package="com.ncs.spring01, model, service" />
+	
+	<!-- * spring DispatcherServlet Test 1단계 **
+		=> xml 적용 ( 2단계 : @ 적용 )
+		1. HandlerMapping Bean 등록  	 
+		=> property: 맴버변수 mappings 값 Setter 주입 
+		=> props (spring01~~.ppt 48p)
+			- mappings 의 Type이 콜렉션의 Properties
+			- Properties 의 값을 할당하는 Tag
+			- 콜렉션의 Properties는 
+			  (String, String) 형태로 저장하는 Map보다 단순화된 컬렉션
+		-->		
+<!-- 	<beans:bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<beans:property name="mappings">
+			<beans:props>
+				<beans:prop key="/mlistsp">ml</beans:prop>
+				<beans:prop key="/mdetailsp">md</beans:prop>
+			</beans:props>
+		</beans:property>
+	</beans:bean> -->
+	
+	<!-- 2. Controller Bean 등록  -->
+	<!-- <beans:bean class="spDispatcher.C01_mList" id="ml" lazy-init="true" />
+	<beans:bean class="spDispatcher.C02_mDetail" id="md" lazy-init="true" />
+	 -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+	
+	
+</beans:beans>

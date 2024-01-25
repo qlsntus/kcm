@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+<!--  LifeCycle_Test 1. xml 
+   => init-method, destroy-method 속성에 메서드지정 (메서드이름만 사용)  -->    
+   
+	 <bean id="lc" class="iocDI04_LifeCycle.LifeCycle" lazy-init="true"
+		init-method="begin" destroy-method="end" />
+	 
+	<!--  LifeCycle_Test 2. @  -->
+	<context:component-scan base-package="iocDI04_LifeCycle" />
+</beans>
