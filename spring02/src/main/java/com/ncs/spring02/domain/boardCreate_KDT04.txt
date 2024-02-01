@@ -1,0 +1,91 @@
+** 게시판 관리
+1. board Table Create
+=> 컬럼
+	: seq(p.Key), id, title, content, regdate, cnt, 댓글(root,step,indent)
+=> 생성문
+create table board(
+seq int(5) Primary Key Auto_Increment,   
+id varchar(10) not null,
+title varchar(200) not null,
+content Text(2000),
+regdate DateTime default Current_TimeStamp,
+cnt int default 0,
+root int default 0,
+step int default 0,
+indent int default 0
+);
+
+=> insert
+insert into board(id, title, content) 
+values('banana','Spring 이란?','처음엔 복잡하고 난해하지만 친해지면 매우 편리하다');
+
+insert into board(id, title, content) 
+values('apple','의존성 주입?','dependency injection_객체간의 의존관계를 객체 자신이 아닌 외부의 조립기가  수행한다');
+
+insert into board(id, title, content) 
+values('green','느슨한 결합(loose coupling)','객체는 인터페이스에 의한 의존관계만을 알고 있으며 이 의존관계는 구현 클래스에 대한 차이를 모르는채 서로 다른 구현으로 대체가 가능');
+
+insert into board(id, title, content) 
+values('banana','Spring의 DI 지원','Spring Container가 DI 조립기(Assembler)를 제공');
+
+insert into board(id, title, content) 
+values('apple','Spring 설정파일','Spring Container가 어떻게 일할 지를 설정하는 파일');
+
+select seq, id, title, regdate, cnt, root from board;
+
+=> 댓글 관리 (원글: seq 와 root 동일해야함)
+ 	-> 수정
+update board set root=seq ;
+
+=> BoardDAO CRUD 구현
+	-> insert 에서 seq와 root가 동일한 값으로 입력되어야함
+	-> seq를 Auto_Increment로 하면 불가능함
+	-> 그러므로 ifNull 함수 적용 (Oracle의 ncl)
+	
+=> insert 구문
+-> 예시
+insert into board values(
+(select * from (select ifNull(max(seq),0)+1 from board) as temp),
+"banana", "여기는 title", "여기는 content", Current_TimeStamp,0,
+(select * from (select ifNull(max(seq),0)+1 from board) as temp), 0, 0 );
+ -> DAO
+ insert into board values(
+(select * from (select ifNull(max(seq),0)+1 from board) as temp),
+?, ?, ?, Current_TimeStamp, 0,
+(select * from (select ifNull(max(seq),0)+1 from board) as temp), 0, 0 );
+
+=> update 구문
+-> title, content 만 수정 가능
+
+2. Project
+2.1) Java
+=> BoardDTO, BoardDAO, BoardService, BoardServiceImpl, BoardController
+
+2.2) Jsp
+=> boardList, boardDetail, boardInsert, boardUpdate
+=> Login 한 경우에만 List 에서 title 클릭시 detail 로
+=> Login 한 경우에만 List 에서 글등록 할 수 있도록 메뉴 표시
+=> 내글인 경우에만 boardDetail 에 글수정 과 글삭제 메뉴 표시하여 수정 또는 삭제할 수 있도록
+
+2.3) 조회수 증가
+=> sql 
+	-> 1) update board set cnt=cnt+1 Where seq=?
+	-> 2) Java code에서 cnt+1 전달하면 set cnt=? 도 가능
+=> 조건 : 글쓴이와 글보는이가 다른경우
+=> 어디서: detail 에서 
+
+2.4) 계층적 답변형 게시판의 답글달기
+
+=> board 조회
+select seq, id, title, root, step, indent from board order by root desc, step asc;
+
+=> 각 컬럼의 역할
+	-> root: 원글의 seq
+	-> step: 댓글의 출력순서 (부모글+1, 이전댓글들 step+1로 수정)
+	-> indent: 댓글의 레벨 (부모글+1)
+=> 원글 -> root: 자신의 seq, step: 0, indent: 0
+=> 첫댓글-> root: 원글의 seq, step: 1-2-3로 변경, indent: 1
+   2댓글-> root: 원글의 seq, step: 1-2, indent: 1
+   3댓글-> root: 원글의 seq, step: 1, indent: 1
+
+=> 댓글 입력 Form 과 컨트롤러의 매핑메서드, 메뉴추가 

@@ -26,10 +26,21 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>sdf</display-name>
+		<servlet-name>sdf</servlet-name>
+		<servlet-class>sdf</servlet-class>
+	</servlet>
 		
 	<servlet-mapping>
 		<servlet-name>appServlet</servlet-name>
 		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>sdf</servlet-name>
+		<url-pattern>/sdf</url-pattern>
 	</servlet-mapping>
 	
 	<!-- 한글처리 필터 -->

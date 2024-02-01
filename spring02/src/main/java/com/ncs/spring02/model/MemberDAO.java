@@ -3,29 +3,58 @@ package com.ncs.spring02.model;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
-
 import com.ncs.spring02.domain.MemberDTO;
-
-
 
 //** DAO(Data Access Object)
 //=> SQL 구문 처리
 //=> CRUD 구현 
 //   Create(Insert), Read(selectList, selectOne), Update, Detete
-//@Component
+
 @Repository
 public class MemberDAO {
 	// ** 전역변수 정의
 	private static Connection cn = DBConnection.getConnection();
-	private static Statement st;
 	private static PreparedStatement pst;
 	private static ResultSet rs;
 	private static String sql;
+	
+	// ** selectJoList 추가
+	// => 조별 맴버 검색
+	public List<MemberDTO> selectJoList(int jno) {
+		sql="select * from member where jno=?";
+		List<MemberDTO> list = new ArrayList<MemberDTO>();
+		try {
+			pst=cn.prepareStatement(sql);
+			pst.setInt(1, jno);
+			rs=pst.executeQuery();
+			if (rs.next()) {
+				do {
+					MemberDTO dto = new MemberDTO();
+					dto.setId(rs.getString(1));
+					dto.setPassword(rs.getString(2));
+					dto.setName(rs.getString(3));
+					dto.setAge(rs.getInt(4));
+					dto.setJno(rs.getInt(5));
+					dto.setInfo(rs.getString(6));
+					dto.setPoint(rs.getDouble(7));
+					dto.setBirthday(rs.getString(8));
+					dto.setRid(rs.getString(9));
+					list.add(dto);
+				}while(rs.next());
+			}else {
+				System.out.println("** Member selectJoList: 출력자료가 1도 없습니다. **");
+				list=null;
+			} //else
+		} catch (Exception e) {
+			System.out.println("** Member selectJoList Exception => "+e.toString());
+			list=null;
+		} //try
+		return list;
+	} //selectJoList
 	
 	// ** selectList
 	public List<MemberDTO> selectList() {
