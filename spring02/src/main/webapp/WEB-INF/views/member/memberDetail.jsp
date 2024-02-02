@@ -30,7 +30,10 @@
 	<tr height="40"><th bgcolor="Violet">Birthday</th>
 		<td>${requestScope.apple.birthday}</td></tr>
 	<tr height="40"><th bgcolor="Violet">추천인</th>
-		<td>${requestScope.apple.rid}</td></tr>									
+		<td>${requestScope.apple.rid}</td></tr>
+	<tr height="40"><th bgcolor="Violet">Image</th>
+		<td><img alt="myImage" width="50" height="70"
+		 src="/spring02/resources/uploadImages/${requestScope.apple.uploadfile}"></td></tr>										
 </c:if>
 <c:if test="${empty requestScope.apple}">
 	<tr><td colspan="2">~~ 출력할 자료가 없습니다 ~~</td></tr>

@@ -142,3 +142,26 @@ create table jo (
 		-> 실패 : index.jsp ( message : 탈퇴 실패 !!! )
  
 =========================================================
+** Upload File
+1)  Table
+=> file 정보 (경로와 파일명) 보관 컬럼 추가 : uploadfile varchar(50) default 'basicman1.jpg';
+	alter table member ADD uploadfile varchar(50) default 'basicman1.jpg';
+
+=> 기본값 넣어놓기
+	update member set uploadfile='aaa.gif' where jno=1;
+	update member set uploadfile='bbb.gif' where jno=2;
+	update member set uploadfile='ccc.gif' where jno=3;
+	update member set uploadfile='ddd.gif' where jno=4;
+	update member set uploadfile='xxx.gif' where jno=7;
+	
+	select id, name, jno, uploadfile from member;
+	
+=> IDE(이클립스) 에 준비
+	wepapp/resources/uploadImages/ 에 위의 화일들 복사해놓기
+
+2) Java Code
+2.1) List 출력
+=> memberList, ~DTO, ~DAO
+
+2.2) 입력, 수정폼 수정하기
+=> joinForm, updateForm 

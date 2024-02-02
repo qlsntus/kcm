@@ -4,5 +4,9 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
+	
+	<!-- 스프링 시큐리티 라이브러리 BCryptPasswordEncoder -->
+	<bean id="bCryptPasswordEncoder" 
+	class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 		
 </beans>

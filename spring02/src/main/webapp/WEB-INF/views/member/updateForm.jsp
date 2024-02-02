@@ -21,10 +21,11 @@
 				 -> disabled: 서버로 전송되지않음
 				-->
 	</tr>
+	<%-- passwordEncoder 적용후 분리함
 	<tr height="40">
 		<td bgcolor="DeepSkyBlue"><label for="password">Password</label></td>
 		<td><input type="password" name="password" id="password" value="${requestScope.apple.password}" size="20"></td>
-	</tr>
+	</tr> --%>
 	<tr height="40">
 		<td bgcolor="DeepSkyBlue"><label for="name">Name</label></td>
 		<td><input type="text" name="name" id="name" value="${requestScope.apple.name}" size="20"></td>
@@ -66,6 +67,7 @@
 </table>
 </form>
 <br><hr>
+&nbsp;<a href="pwUpdate">Password수정</a>&nbsp;
 <c:if test="${!empty requestScope.message}">
 => ${requestScope.message}<br>
 </c:if>
