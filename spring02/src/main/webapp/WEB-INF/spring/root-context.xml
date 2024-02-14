@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	
@@ -9,4 +11,30 @@
 	<bean id="bCryptPasswordEncoder" 
 	class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 		
+	
+	   <!-- ** Mybatis 설정 : interface 방식, root-context 에 설정 *********  
+      => DAO 에서의 sql 구문을 xml (Mapper) 로 처리
+      => DB_Connection, Mybatis 설정 
+      1) DB_Connection     -->      
+      
+      <bean id="dataSource" 
+      	class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+      	<property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+      	<property name="url" 
+      	value="jdbc:mysql://localhost:3306/mydb?useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true"/>
+      	<property name="username" value="root"/>
+      	<property name="password" value="mysql"/>
+      </bean>
+      
+      
+      
+   <!--
+      2) Mybatis 설정 
+         -> sqlSessionFactory bean 설정 
+         -> interface 의 위치_package 등록  -->
+   <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+   	<property name="dataSource" ref="dataSource" />
+   </bean>
+   <mybatis-spring:scan base-package="mapperInterface"/>
+   <!-- ********************************** -->
 </beans>

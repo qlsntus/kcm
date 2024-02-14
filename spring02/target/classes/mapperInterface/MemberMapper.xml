@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapperInterface.MemberMapper">
+
+<!-- ** selectJoList -->
+	<select id="selectJoList" resultType="com.ncs.spring02.domain.MemberDTO">
+	select * from member where jno=#{jno}
+	
+	
+	</select>
+
+
+<!--1) selectList  -->
+	<select id="selectList" resultType="com.ncs.spring02.domain.MemberDTO">
+		select * from member
+	</select>
+
+
+
+<!-- selectOne -->
+	<select id="selectOne" resultType="com.ncs.spring02.domain.MemberDTO">
+		select * from member where id=#{id}
+	</select>
+
+<!-- insert -->
+	<insert id="insert">
+	insert into member values(#{id},#{password},#{name},#{age},#{jno},
+	#{info},#{point},#{birthday},#{rid},#{uploadfile} )
+	</insert>
+
+<!-- update-->
+	<update id="update">
+		update member set name=#{name}, age=#{age}, jno=#{jno}, info=#{info}
+		, point=#{point}, birthday=#{birthday}, rid=#{rid}, 
+		uploadfile=#{uploadfile} where id=#{id}
+	
+	</update>
+<!-- Password_Update -->
+	<update id="pwUpdate">
+	update member set password=#{password} where id=#{id}
+	</update>
+
+<!-- delete  -->
+	<delete id="delete">
+	delete from member where id=#{id}
+	
+	</delete>
+ 
+</mapper>

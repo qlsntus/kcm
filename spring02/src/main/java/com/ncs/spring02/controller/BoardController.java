@@ -11,10 +11,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ncs.spring02.domain.BoardDTO;
-import com.ncs.spring02.domain.JoDTO;
 import com.ncs.spring02.service.BoardService;
 
 import lombok.AllArgsConstructor;
+import pageTest.Criteria;
+import pageTest.PageMaker;
 
 @Controller
 @AllArgsConstructor
@@ -22,6 +23,30 @@ import lombok.AllArgsConstructor;
 public class BoardController {
 	
 	BoardService service;
+	
+	//** Board_Paging
+	@GetMapping("/bPageList")
+	public void bPageList(Model model, Criteria cri, PageMaker pageMaker ) {
+		//1) Criteria 처리
+		// => currPage, rowsPerPage 값들은 Parameter 로 전달되어 자동으로 cri에 set
+		cri.setSnoEno();
+		
+		//2) Service
+		// => 출력대상인 Rows 를 select
+		model.addAttribute("banana", service.bPageList(cri));
+		
+		//3) View처리 : PageMaker 이용
+		// => cri, totalRowsCount ( Read from DB)
+		pageMaker.setCri(cri);
+		pageMaker.setTotalRowsCount(service.totalRowsCount(cri));
+		model.addAttribute("pageMaker", pageMaker);
+		
+		
+		
+	} //bPageList
+	
+	
+	
 	// ** Reply Insert
 	@GetMapping("/replyInsert")
 	public void replyInsert(BoardDTO dto) {

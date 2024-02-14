@@ -150,7 +150,7 @@ public class MemberDAO {
 	// => id(P.Key) 제외한 모든컬럼 수정 
 	public int update(MemberDTO dto) {
 		sql="update member set  name=?, age=?, jno=?, info=?"
-				+ ", point=?, birthday=?, rid=? where id=?";
+				+ ", point=?, birthday=?, rid=?, uploadfile=? where id=?";
 		try {
 			pst=cn.prepareStatement(sql);
 			pst.setString(1, dto.getName());
@@ -160,7 +160,8 @@ public class MemberDAO {
 			pst.setDouble(5, dto.getPoint());
 			pst.setString(6, dto.getBirthday());
 			pst.setString(7, dto.getRid());
-			pst.setString(8, dto.getId());
+			pst.setString(8, dto.getUploadfile());
+			pst.setString(9, dto.getId());
 			
 			return  pst.executeUpdate(); // 처리갯수
 		} catch (Exception e) {
@@ -182,6 +183,7 @@ public class MemberDAO {
 			return 0;
 		}
 	} //pwUpdate
+	
 	// ** delete
 	public int delete(String id) {
 		sql="delete from member where id=?";
