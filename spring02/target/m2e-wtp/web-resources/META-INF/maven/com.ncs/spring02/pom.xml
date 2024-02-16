@@ -130,7 +130,13 @@
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
-		</dependency>    
+		</dependency>
+		<!-- => Test 추가 : Spring MVC Mybatis Test -->
+      <dependency>
+         <groupId>org.springframework</groupId>
+         <artifactId>spring-test</artifactId>
+         <version>${org.springframework-version}</version>
+      </dependency>
 		  
 		  <!-- MySql
          https://mvnrepository.com/artifact/mysql/mysql-connector-java -->

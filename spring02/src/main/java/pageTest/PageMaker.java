@@ -1,5 +1,10 @@
 package pageTest;
 
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+
 import lombok.Getter;
 import lombok.ToString;
 
@@ -29,14 +34,22 @@ public class PageMaker {
 	
 	private boolean prev; // 이전 PageBlock 으로 
 	private boolean next; // 다음 PageBlock 으로 
+	//=> bCheckList 또는 bPageList 등 요청명에 해당하는 uri를 만들기 위함
+	private String mappingName;
+	//Criteria cri; ver01
 	
-	Criteria cri;
-	
-	//** 필요한 값 계산
+	SearchCriteria cri; //ver02
+	//** 필요한 set 값 & 계산
 	// 1) Criteria 
-	public void setCri(Criteria cri) {
+	// => ver01: Criteria
+	// => ver02: SearchCriteria
+	public void setCri(SearchCriteria cri) {
 		this.cri=cri;
 	}
+	public void setMappingName(String mappingName) {
+		this.mappingName=mappingName;
+	}
+	
 	//2) totalRowsCount
 	// => 전체 Rows 갯수 : Read from DB
 	// => 이 값을 이용해서 나머지 필요한값 계산
@@ -76,5 +89,73 @@ public class PageMaker {
 		
 		}// calcData
 
+	   // 4) QueryString 자동 만들기
+	   // ** 패키지 org.springframework.web.util
+	   // => 웹개발에 필요한 많은 유틸리티 클래스 제공
+	   // => UriComponents , UriComponentsBuilder
+	   //     Uri를 동적으로 생성해주는 클래스,
+	   //     파라미터가 조합된 uri를 손쉽게 만들어줌
+	   // => ?currPage=7&rowsPerPage=10 이것을 만들어줌
+	   //     ? 부터 만들어지므로 jsp Code에서 ? 포함하지 않도록 주의    
+	   
+	
+	    // => mappingName 앞쪽에 추가함
+	    
+	   // ** ver01
+	   // => QueryString 자동생성 
+	   //    bPageList?currPage=4&rowsPerPage=3  
+	public String makeQuery(int currPage) {
+		UriComponents uriComponents = 
+				UriComponentsBuilder.newInstance()
+				.queryParam("currPage", currPage)
+				.queryParam("rowsPerPage", cri.getRowsPerPage())
+				.build();
+		return this.mappingName+uriComponents.toString();
+	}//makeQuery
+	
+	// ** ver02 
+	
+	   // ** ver02
+	   // => makeQuery + search 조건 추가 (Paging 시에도 조건이 유지되도록 해줘야함)
+	   // => ?curPage=1&rowsPerPage=5&searchType=title&keyword=Java
+	   
+	   // ** 배열Type check 처리 : Map 으로처리
+	   // => ?curPage=1&rowsPerPage=5&searchType=t&keyword=Java&check=admin&check=banana
+	   //    위의 쿼리스트링에서 check 부분은 몇개일지 모름
+	   // => UriComponents 에서 Multi Value 처리 :  queryParams(MultiValueMap<String, String> params) 
+	   
+	   // ** MultiValueMap
+	   // => 키의 중복이 허용됨 즉, 하나의 키에 여러 값을 받을 수 있음
+	   // => new LinkedMultiValueMap() 으로 생성, add("key","value")
+	   
+	   // ** Map (키중복 허용안됨) 과 비교 
+	   // => HashMap : 순서보장 안됨 
+	   // => TreeMap : key값 순서로 자동정렬
+	   // => LinkedHashMap : 입력순서보장
+	   public String searchQuery(int currPage) {
+       // ** check 처리 
+       // => 배열 -> MultiValueMap 으로 -> UriComponents 의 queryParams에 적용
+       // => MultiValueMap 생성
+	 MultiValueMap<String,String> checkMap= new LinkedMultiValueMap<String,String>();
+       // => check에 선택값이 있는경우에만
+       //    배열 check의 원소들을 checkMap 으로
+	 if ( cri.getCheck() !=null && cri.getCheck().length>0 ) {
+		 for ( String c:cri.getCheck()  ) {
+			 checkMap.add("check", c);
+		 } //for
+	 }else checkMap=null;
+		   
+		   
+			UriComponents uriComponents = 
+					UriComponentsBuilder.newInstance()
+					.queryParam("currPage", currPage)
+					.queryParam("rowsPerPage", cri.getRowsPerPage())
+					.queryParam("searchType", cri.getSearchType())
+					.queryParam("keyword", cri.getKeyword())
+					.queryParams(checkMap)
+					.build();
+			return this.mappingName+uriComponents.toString();
+	   }//searchQuery
+	 
 
 }//class

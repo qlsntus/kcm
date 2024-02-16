@@ -5,7 +5,7 @@
 
 <!-- ** selectList -->
 	<select id="selectList" resultType="com.ncs.spring02.domain.JoDTO">
-	select j.jno, jname, captain, m.name, project, slogan
+	select j.jno, jname, captain, m.name cname, project, slogan
 			from jo j LEFT OUTER JOIN member m ON j.captain=m.id 
 	</select>
 
@@ -16,18 +16,18 @@
 	</select>
 
 
-<!-- insert -->
+<!-- 2) insert -->
 	<insert id="insert">
 	insert into jo values(#{jno},#{jname},#{captain},#{project},#{slogan})
 	</insert>
 
-<!-- update-->
+<!-- 3) update-->
 	<update id="update">
 		update jo set jname=#{jname}, captain=#{captain}, project=#{project}, slogan=#{slogan} 
 		where jno=#{jno}
 	</update>
 
-<!-- delete  -->
+<!-- 4) delete  -->
 	<delete id="delete">
 	delete from jo where jno=#{jno}
 	</delete>

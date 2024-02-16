@@ -24,6 +24,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.ncs.spring02.domain.MemberDTO;
 import com.ncs.spring02.service.MemberService;
 
+import lombok.AllArgsConstructor;
+import pageTest.PageMaker;
+import pageTest.SearchCriteria;
+
 //** IOC/DI 적용 ( @Component 의 세분화 ) 
 //=> 스프링 프레임워크에서는 클래스들을 기능별로 분류하기위해 @ 을 추가함.
 //=> @Controller
@@ -138,6 +142,7 @@ import com.ncs.spring02.service.MemberService;
 
 // -> Logger 사용과의 차이점 : "{}" 지원안됨 , 호출명 log
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 @Controller
 @RequestMapping(value="/member")
 public class MemberController {
@@ -170,6 +175,77 @@ public class MemberController {
 		
 	} //idDupCheck
 	
+	
+	
+	//** Member_Paging
+	// => ver01 : Criteria 사용
+	//public void bPageList(Model model, Criteria cri, PageMaker pageMaker )
+	// => ver02 : SearchCriteria 사용 (검색기능 추가)
+	@GetMapping("/mCheckList")
+	public String mCheckList(HttpServletRequest request,Model model, SearchCriteria cri, 
+			PageMaker pageMaker ){
+		
+		String uri="member/mPageList";
+		//=> 요청명을 uri에 포함하기 위함
+		String mappingName=
+	request.getRequestURI().substring(request.getRequestURI().lastIndexOf("/")+1);
+		System.out.println("=>ReqeustURI: "+request.getRequestURI());
+		//=> RequestURI: /spring02/member/mPageList
+		System.out.println("=>mappingName:"+mappingName);
+		
+		
+		
+		
+		//1) Criteria 처리
+		cri.setSnoEno();
+		
+		//2) Service
+		   // => check 의 값을 선택하지 않은경우 check 값을 null 로 확실하게 해줘야함.
+	      //    mapper 에서 명확하게 구분할수 있도록해야 정확한 저리가능 
+		if (cri.getCheck() !=null && cri.getCheck().length<1)
+			cri.setCheck(null);
+		model.addAttribute("banana", service.mCheckList(cri));
+		
+		//3) View처리 : PageMaker 이용
+		// => cri, totalRowsCount ( Read from DB)
+		pageMaker.setCri(cri);
+		pageMaker.setMappingName(mappingName);
+		pageMaker.setTotalRowsCount(service.mCheckRowsCount(cri));
+		model.addAttribute("pageMaker", pageMaker);
+		return uri;
+		
+		
+		
+	} //mCheckList
+	
+	//** Member_Paging
+	// => ver01 : Criteria 사용
+	//public void bPageList(Model model, Criteria cri, PageMaker pageMaker )
+	// => ver02 : SearchCriteria 사용 (검색기능 추가)
+	@GetMapping("/mPageList")
+	public void mPageList(HttpServletRequest request,Model model, 
+			           SearchCriteria cri, PageMaker pageMaker ) {
+		//1) Criteria 처리
+		// => ver01: currPage, rowsPerPage 값들은 Parameter 로 전달되어 자동으로 cri에 set
+		//=> ver02: ver01 + searchType, keyword 도 동일하게 cri에 set
+		cri.setSnoEno();
+		
+		//2) Service
+		model.addAttribute("banana", service.mPageList(cri));
+		
+		//3) View처리 : PageMaker 이용
+		// => cri, totalRowsCount ( Read from DB)
+		
+		String mappingName=
+		request.getRequestURI().substring(request.getRequestURI().lastIndexOf("/")+1);
+		pageMaker.setCri(cri);
+		pageMaker.setMappingName(mappingName);
+		pageMaker.setTotalRowsCount(service.mtotalRowsCount(cri));
+		model.addAttribute("pageMaker", pageMaker);
+		
+		
+		
+	} //mPageList
 	
 	
 	
@@ -484,5 +560,5 @@ public class MemberController {
 		}
 		return uri;
 	} //delete
-	
 } //class
+

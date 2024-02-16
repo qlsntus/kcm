@@ -45,6 +45,7 @@
 &nbsp;<a href="jo/joInsert">JoInsert</a>&nbsp;
 &nbsp;<a href="bcrypt">BCrypt</a>&nbsp;<br>
 &nbsp;<a href="board/bPageList">BPage</a>&nbsp;
+&nbsp;<a href="member/mPageList">MPage</a>&nbsp;
 
 
 

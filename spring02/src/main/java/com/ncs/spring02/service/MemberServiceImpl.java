@@ -5,12 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ncs.spring02.domain.BoardDTO;
 import com.ncs.spring02.domain.MemberDTO;
 
 import mapperInterface.MemberMapper;
 //** Mybatis 적용
 //=> CRUD 처리를 Mapper 를 이용
 //=> DAO 대신 Mapper interface ->  ~Mapper.xml
+import pageTest.SearchCriteria;
 
 //** Mybatis interface 방식으로 적용
 //=> MemberDAO 대신 MemberMapper 사용
@@ -46,6 +48,34 @@ public class MemberServiceImpl implements MemberService {
 	public List<MemberDTO> selectJoList(int jno) {
 		return mapper.selectJoList(jno);
 	}
+	
+	//** Member Check_List
+		
+		@Override
+		public List<MemberDTO> mCheckList(SearchCriteria cri) {
+			return mapper.mCheckList(cri);
+		}
+		@Override
+		public int mCheckRowsCount(SearchCriteria cri) {
+			return mapper.mCheckRowsCount(cri);
+		}
+	 
+		
+		//** Member_Paging
+		// => ver01: Criteria 사용
+		// => ver02: SearchCriteria 사용
+		@Override
+		public List<MemberDTO> mPageList(SearchCriteria cri) {
+			//return mapper.mPageList(cri); //ver01
+			return mapper.mSearchList(cri); //ver02
+			
+		}
+		@Override
+		public int mtotalRowsCount(SearchCriteria cri) {
+			//return mapper.mtotalRowsCount(cri); ver01
+			return mapper.mSearchRowsCount(cri); //ver02
+			
+		}
 	
 	// ** selectList
 	@Override

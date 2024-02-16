@@ -2,9 +2,26 @@ package mapperInterface;
 
 import java.util.List;
 
+import com.ncs.spring02.domain.BoardDTO;
 import com.ncs.spring02.domain.MemberDTO;
 
+import pageTest.SearchCriteria;
+
 public interface MemberMapper {
+	
+	//** Member Check_List
+	public List<MemberDTO> mCheckList(SearchCriteria cri) ;
+	public int mCheckRowsCount(SearchCriteria cri) ;
+	
+	//** Member Search Paging
+		public List<MemberDTO> mSearchList(SearchCriteria cri) ;
+		public int mSearchRowsCount(SearchCriteria cri) ;
+	
+	//** Member_Paging
+	// => ver01: Criteria 사용
+	// => ver02: SearchCriteria 사용
+	public List<MemberDTO> mPageList(SearchCriteria cri) ;
+	public int mtotalRowsCount(SearchCriteria cri) ;
 	
 	
 	// ** selectJoList
