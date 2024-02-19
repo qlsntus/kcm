@@ -26,8 +26,6 @@
       	<property name="password" value="mysql"/>
       </bean>
       
-      
-      
    <!--
       2) Mybatis 설정 
          -> sqlSessionFactory bean 설정 
@@ -37,4 +35,10 @@
    </bean>
    <mybatis-spring:scan base-package="mapperInterface"/>
    <!-- ********************************** -->
+   
+  <!--  JUnit Test
+   => SpringDAO Test Bean 설정 : MerberDAO, MemberDTO -->
+   <bean class="com.ncs.spring02.model.MemberDAO" lazy-init="true"/>
+      <bean class="com.ncs.spring02.domain.MemberDTO" lazy-init="true"/>
+      
 </beans>

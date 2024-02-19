@@ -5,7 +5,9 @@ import static org.junit.Assert.assertNotNull;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+
+
 
 public class Ex02_DBConnection {
 

@@ -13,6 +13,7 @@
 		<config>src/main/java/iocDI02_anno/app05.xml</config>
 		<config>src/main/java/iocDI03_jc/app09.xml</config>
 		<config>src/main/java/iocDI04_LifeCycle/lc01.xml</config>
+		<config>src/main/resources/aop01.xml</config>
 	</configs>
 	<autoconfigs>
 		<config>src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml</config>

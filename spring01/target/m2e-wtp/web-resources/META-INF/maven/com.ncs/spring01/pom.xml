@@ -34,14 +34,21 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${org.springframework-version}</version>
 		</dependency>
-				
-		<!-- AspectJ -->
+		<!-- ** AOP Test 
+         1) AspectJ -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
 			<version>${org.aspectj-version}</version>
 		</dependency>	
-		
+		   <!-- 2) AspectJ Weaver 
+            : AOP 실습시에 반드시 추가해줄것 
+            : weaver가 AOP에서 advice를 핵심기능에 적용하는 설정 파일 -->
+          <dependency>
+         <groupId>org.aspectj</groupId>
+         <artifactId>aspectjweaver</artifactId>
+         <version>${org.aspectj-version}</version>
+      </dependency>  
 		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
