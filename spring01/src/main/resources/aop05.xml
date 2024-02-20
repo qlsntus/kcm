@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<!-- 1. Bean 등록 => Boy, Girl, MyAspect -->
+	<bean id="boy" class="aop05.Boy" lazy-init="true" />
+	<bean id="girl" class="aop05.Girl" lazy-init="true"/>
+	<bean id="myAsp" class="aop05.MyAspect" lazy-init="true"/>
+
+	<!-- 2. AOP 설정 
+		1) 공통기능(Aspect) 으로 사용할 bean을 지정
+		2) 핵심적 관심사항(pointcut)을 등록  
+		3) around advice 지정 : aop05.MyAspect 에 정의된 횡적 관심사항 (Around) 메서드 	
+	-->
+	<aop:config>
+		<aop:aspect ref="myAsp">
+			<aop:pointcut expression="execution(* doStudying(..))" id="myPointcut"/>
+			<aop:around method="myAround" pointcut-ref="myPointcut"/> 
+		</aop:aspect>
+	</aop:config>
+
+</beans>

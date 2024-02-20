@@ -65,5 +65,13 @@
          ->   / 는 모든 요청은 받지만 처리 못하는 것은 넘기겠다
          ( 처리 안되는 부분 있다면  xml 에 추가적으로 필요한 코드를 작성함 ) 
    -->
-
+  <!-- Exception Test1 : 응답상태코드 -->
+<!--   <error-page>
+     <error-code>404</error-code>
+     <location>/WEB-INF/views/errorPage/exception_404.jsp</location>
+  </error-page>
+  <error-page>
+     <error-code>500</error-code>
+     <location>/WEB-INF/views/errorPage/exception_500.jsp</location>
+  </error-page> -->
 </web-app>

@@ -3,9 +3,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 	
@@ -42,6 +46,78 @@
 	<beans:property name="maxUploadSize" value="-1"/>
 	</beans:bean>
 	
+	
+	   <!-- ** AOP Transaction 설정 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+   *** 스프링 Mybatis 트랜잭션 설정의 특징
+   => XML 기반 적용만 가능
+   => <aop:aspect>는 사용할 수 없고 <aop:advisor> 를 사용해야함
+      ( 둘은 같은기능 이지만 사용 속성이 다르며 스프링 트랜잭션 관리에 사용되는 어드바이스의 경우
+        우리가 메서드명을 알 수 없기 때문에  <aop:advisor> 를 사용함 )  -->
+   
+   <!-- 1. 트랜잭션 관리자 클래스 등록  :
+   => PlattformTransactionManager 인터페이스를 구현한 클래스 들
+   => DataSourceTransactionManager : JDBC, Mybatis 모두 지원 
+   => commit, rollback 지원  
+   
+   *** MyBatis-Spring Transaction 처리 
+   => MyBatis 프레임워크는 Spring 프레임워크에서 MyBatis를 통합하여 사용할 수 있게
+      MyBatis-Spring를 제공한다.
+   => MyBatis-Spring를 통해 만들어진 SqlSessionTemplate 객체는 
+      commit(), rollback() 메소드를 사용할 수 없다.
+   => 즉 SqlSessionTemplate 객체를 이용하여 프로그램적으로는 트랜잭션을 관리할수 없다. 
+      그러므로 DataSourceTransactionManager 클래스를 제공하며, 이를 이용 xml로 처리함.
+   -->      
+   <beans:bean id="txManager" 
+         class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+      <beans:property name="dataSource" ref="dataSource" />
+   </beans:bean>
+
+   <!-- 2. Transaction 관리 Advice 설정  
+   => 스프링 컨테이너가 <tx:advice> 설정을 참조하여 자동으로 생성  
+    => 어드바이스 txAdvice는 앞서 설정한 txManeger를 이용하여 트랜잭션을 관리 
+      자식 엘리먼트인 <tx:method> 이용하여 트랜잭션 적용메서드를 지정함 -->   
+   <tx:advice id="txAdvice" transaction-manager="txManager">
+      <tx:attributes>
+         <tx:method name="sel*" read-only="true"/>      
+         <tx:method name="*" rollback-for="Exception"/>
+         <!-- 'sel' 로 시작되는 모든  메서드는 read_only로 처리되어  
+              트랜잭션 관리 대상에서 제외되며 나머지는 관리대상이 됨  -->
+      </tx:attributes>
+   </tx:advice>   
+      
+   <!-- 3. Transaction AOP 설정 -->      
+   <aop:config>
+      <aop:pointcut expression="execution(* com.ncs.spring02.controller.*.join(..))" id="myPointcut"/>
+      <aop:advisor advice-ref="txAdvice" pointcut-ref="myPointcut"/>
+   </aop:config> 
+
+<!-- ** Exception Resolver 설정 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+   1. Exception Resolver Bean 설정 
+   <beans:bean id="exceptionResolver" 
+         class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+         -->  
+<!-- 2. Exception 별 property 등록 
+         => setter 주입을 의미 
+         => setExceptionMappings(..) : 매개변수 Type 이 Collection Properties
+         => setDefaultErrorView(..) : 매개변수 Type 이 String     
+      <beans:property name="exceptionMappings" >
+         <beans:props>
+            <beans:prop key="org.springframework.dao.DuplicateKeyException">
+                     errorPage/dupExceptionMessage</beans:prop>         
+            <beans:prop key="org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator">
+                     errorPage/sqlexceptionMessage</beans:prop>
+            <beans:prop key="java.lang.IllegalArgumentException">
+                     errorPage/ilexceptionMessage</beans:prop>   
+            <beans:prop key="java.lang.ArithmeticException">
+                     errorPage/arexceptionMessage</beans:prop>
+            <beans:prop key="java.lang.NullPointerException">
+                     errorPage/npException</beans:prop>
+         </beans:props>
+      </beans:property>
+      
+      <beans:property name="defaultErrorView" value="errorPage/exception_500" />
+   </beans:bean>
+-->  
 	
 	
 	

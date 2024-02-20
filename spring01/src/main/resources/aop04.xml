@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+	
+	   <!-- 1. Bean 등록 => Boy, Girl, MyAspect -->
+   <bean id="boy" class="aop04.Boy" lazy-init="true" />
+   <bean id="girl" class="aop04.Girl" lazy-init="true" />
+   <bean id="myAsp" class="aop04.MyAspect" lazy-init="true" />
+   
+   <!-- 2. AOP 설정 
+      1) 공통기능(Aspect) 으로 사용할 bean을 지정
+      2) 핵심적 관심사항(pointcut)을 등록  
+      3) Type별 advice 지정 : aop03.MyAspect 에 정의된 횡적 관심사항 메서드들을 설정    
+   -->
+   <aop:config>
+   		<aop:aspect ref="myAsp">
+   			<aop:pointcut expression="execution(* do*(..))" id="mypointcut"/>
+   			<aop:before method="myBefore" pointcut-ref="mypointcut"/>
+   			<aop:after-returning method="myAfter_returning" pointcut-ref="mypointcut" returning="result"/>
+   			<aop:after-throwing method="myAfter_throwing" pointcut-ref="mypointcut" throwing="e"/>
+   			<aop:after method="myAfter" pointcut-ref="mypointcut"/>
+   		</aop:aspect>
+   
+   </aop:config>
+   <!-- <aop:pointcut expression="execution(* doStudying(..))" id="mypoint"/> 
+      expression="execution(pointcut의 표현식 기술) -> (SpEL_스프링 표현식) 
+      execution : 메서드 처럼 생긴 expression 속성의 명시자   
+      execution(* 패키지경로.클래스명.메서드명(..) )   
+         return => * : 모든 return type , void : void , !void : void 아닌경우 
+         메서드명 => * : bean에 등록된 메서드 모두에 pointcut 적용 
+                      delete* : delete 로 시작하는 모든 메서드  
+                        메서드명  : 해당 메서드만 pointcut 적용
+         인자 => (..) : 매개변수의 갯수와 타입에 제한없음  
+             => (*)  : 반드시 1개의 매개변수를 가짐  
+             => (*,*): 반드시 2개의 매개변수를 가짐 
+-->
+
+</beans>

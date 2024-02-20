@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+	<!-- 1. @ 적용 패키지 지정  -->
+	<context:component-scan base-package="aop08" /> 
+	
+	<!-- 2. Aop 설정 : aop 관련 어노테이션의 설정을 위한 엘리먼트 추가
+			-> aop 관련 어노테이션들을 인식하고 용도에 맞게 처리해 줌
+		=> 클래스 프록시 true 설정 : 인터페이스 없이 클래스에 직접 프록시를 적용할수있게 해줌 
+		   ~AOP.ppt 참고 -->	
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+
+</beans>
