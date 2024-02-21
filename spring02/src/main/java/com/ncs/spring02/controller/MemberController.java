@@ -120,7 +120,8 @@ import pageTest.SearchCriteria;
 // -> url이 /post인 요청 중 POST 메서드인 경우 호출됨
 //    GET, POST, PUT, DELETE, OPTIONS, TRACE 총 7개의 HTTP 메서드가 정의되어 있음.
 //    ( 이들은 아래 @GetMapping ... 등으로도 좀더 간편하게 사용가능
-//      그러나 이들은 메서드 레벨에만 적용가능    )  
+//      그러나 이들은 메서드 레벨에만 적용가능    )
+
 
 //=> params : 요청 파라미터와 값으로도 구분 가능함.
 // @RequestMapping(value="/post", params="useYn=Y")
@@ -203,6 +204,7 @@ public class MemberController {
 	// => ver01 : Criteria 사용
 	//public void bPageList(Model model, Criteria cri, PageMaker pageMaker )
 	// => ver02 : SearchCriteria 사용 (검색기능 추가)
+	//** Member Check_List
 	@GetMapping("/mCheckList")
 	public String mCheckList(HttpServletRequest request,Model model, SearchCriteria cri, 
 			PageMaker pageMaker ){
