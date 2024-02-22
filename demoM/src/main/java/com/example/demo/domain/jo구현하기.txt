@@ -1,0 +1,14 @@
+** JO 관리 시스템 **
+
+⇒ CRUD 구현
+⇒ Java:JoDTO, //// JoDAO, JoService, JoController
+⇒ Jsp : joList.jsp, joDetail.jsp, joInsert.jsp , joUpdate.jsp
+=> home : 메뉴추가 <a href="jo/joList">JList</a>
+=> joList 에서 jno를 클릭하면 joDetail 출력표시
+
+** 기능 추가
+=> joDetail 에 조원 목록 출력하기
+ -> JoController : 
+ -조원 목록 읽어오기 
+ -MemberDAO, Service에 selectJoList 추가
+ 	-> joDetail.jsp에 출력구문 추가

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapperInterface.MemberMapper">
+
+<!-- ** Member Check_List 
+	=> check 조건 선택한 경우: ~~~ where jno in(1,5,7) 
+-->
+	<select id="mCheckList" resultType="com.example.demo.domain.MemberDTO">
+		select * from member
+		<if test="check!=null">
+			where jno in 
+			<foreach collection="check" item="it" open="(" close=")" separator=",">
+				#{it}
+			</foreach>
+		</if>
+		order by jno
+		limit #{sno}, #{rowsPerPage} 
+	</select>
+	
+	<select id="mCheckRowsCount" resultType="int">
+		select count(*) from member
+		<if test="check!=null">
+			where jno in 
+			<foreach collection="check" item="it" open="(" close=")" separator=",">
+				#{it}
+			</foreach>
+		</if>
+	</select>
+
+<!-- ** Member Search Paging 
+=> sql Tag, include Tag, ${jno} 적용 -->
+	<sql id="search">
+	<!-- 1) 조건값 CONCAT('%',	#{keyword}, '%') 처리 -->
+		<if test="keyword!=null">
+			<bind name="keyval" value="'%'+keyword+'%'"/>
+		</if>
+	<!-- 2) Like 조건문 -->
+		<choose>
+			<when test="searchType=='all' and keyword!=null">
+			<!-- id, name, info, rid 에서  keyword 가 포함된 회원목록 -->
+				and ( id LIKE #{keyval}
+						OR name LIKE #{keyval} 
+						OR info LIKE #{keyval}
+						OR rid LIKE #{keyval} ))
+			</when>
+			<when test="searchType!=null and keyword!=null">
+			<!-- searchType 이 컬럼명인 경우 -->
+				and ${searchType} LIKE #{keyval} )
+			</when>
+			<otherwise>)</otherwise>
+		</choose>
+	</sql>
+	
+	<select id="mSearchList" resultType="com.example.demo.domain.MemberDTO">
+		select * from member
+		where ( id is Not NULL <include refid="search"></include>
+		limit #{sno}, #{rowsPerPage} 
+	</select>
+	<select id="mSearchRowsCount" resultType="int">
+		select count(*) from member
+		where ( id is Not NULL <include refid="search"></include>
+	</select>
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<!-- ** selectJoList -->
+	<select id="selectJoList" resultType="com.example.demo.domain.MemberDTO">
+		select * from member where jno=#{jno}
+	</select>
+
+<!-- ** selectList -->
+	<select id="selectList" resultType="com.example.demo.domain.MemberDTO">
+		select * from member
+	</select>
+
+<!-- ** selectOne -->
+	<select id="selectOne" resultType="com.example.demo.domain.MemberDTO">
+		select * from member where id=#{id}
+	</select>
+
+<!-- ** insert -->
+	<insert id="insert">
+		insert into member values( #{id},#{password},#{name},#{age}
+		,#{jno},#{info},#{point},#{birthday},#{rid},#{uploadfile} )
+	</insert>
+
+<!-- ** update -->
+	<update id="update">
+		update member set name=#{name}, age=#{age}, jno=#{jno}, info=#{info}
+		, point=#{point}, birthday=#{birthday}, rid=#{rid}, uploadfile=#{uploadfile} 
+		where id=#{id}
+	</update>
+
+<!-- ** Password_Update : pwUpdate -->
+	<update id="pwUpdate">
+		update member set password=#{password} where id=#{id}
+	</update>
+
+<!-- ** delete -->
+	<delete id="delete">
+		delete from member where id=#{id}
+	</delete>
+
+</mapper>

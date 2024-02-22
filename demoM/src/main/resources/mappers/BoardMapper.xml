@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapperInterface.BoardMapper">
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+** interface 를 통해 ..~Mapper 접근
+=> interface ..~Mapper.java 의 패키지명 & 화일명과  
+   ..~Mapper.xml 의 패키지명 & 화일명 & namespace 값은 같아야됨. 
+   
+=> namespace: 자바클래스에서 mapper를 찾는 경로
+			  다른 mapper와 중복되지 않도록 네임스페이스 기재   
+
+*** mapper 기본문법 
+1) #{id} : parameter 로 전달된 dto 의 id 라는 컬럼의 value 가 전달됨  
+		   -> getId() 로 처리함, Map의 경우 키값이 id 인 값을 찾음.
+		    
+2) ${id} : 필드를 표현 (매개변수로 전달된 객체의 id 컬럼의 값을 table의 컬럼으로 인식하고 적용함)    
+		   
+3) CDATA : XML에서는  <,>등 비교연산자의 경우 XML규칙상 에러 나기 때문에,
+		   이 기호를 연산자로 인식하도록 하기 위해서는 SQL문을 CDATA로 묶어 주어야 한다.
+		   
+		   <![CDATA[ SELECT * FROM table WHERE jno < 5 ]]>
+		   
+4) 조건문, 반복문, sql, include, selectKey 등 		   
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<!-- ** 반복문 : Board Check List  ************************* 
+=> <foreach ...... Test
+
+   select * from board where id in ('admin','teacher','banana') ......
+   select * from board where id='admin' OR id='banana' OR ...
+   
+   select * from member where jno in (1, 3, 5) order by id asc (추천)
+   select * from member where jno=1 OR jno=3 OR jno=5 order by id asc (비추)
+   
+=> mapper 에 반복문 적용하기 : <foreach..... 
+   비교 Java for : for ( String lev : levArr )   
+   
+=> mapper foreach 기본형식
+
+	<foreach ...index="index"..>   
+              ...... "${index}" : index 값 사용하기 
+                      사용하지 않는경우 아래처럼 표시해도 되고, 생략해도됨.
+   <foreach .... index="" open="(" close=")" separator=",">  	
+      	
+=> collection : list 또는 array Type 의 매개변수 (dto에 정의된 변수 사용)	
+   item : collection 의  데이터 를 1건씩 전달 받으며 위의 구문을 완성함. 	
+   index : 필요시 사용,  0 부터 시작 (0,1,2...)  
+ 	
+=> SearchCriteria,  PageMaker 적용	
+ 	limit #{sno}, #{rowsPerPage}  추가
+ 	
+** FIND_IN_SET : 필요시 사용
+ => FIND_IN_SET('value', 컬럼명) : 컬럼에 'value' 가 있으면 선택
+ => 배열 Type Data 에 유용하게 적용가능 ( 예, category = 'sports, action, comic' )	
+ => 반복문에 FIND_IN_SET 적용하기
+ 	: check Box 와 keyword 를 이용한 검색 & Paging
+ 
+ <select id="pcGameList" resultType="vo.GameVO">
+        select game_img, game_name 
+        from pcgame 
+        where (game_number > 0)
+        <if test="keyword != null">
+             <bind name="keyVal" value="'%' + keyword + '%'"/>
+             and game_name like #{keyVal}
+        </if>
+        <if test="check != null">
+	 <foreach collection="check" item="it" open=" and ( " close=")" separator="or ">
+		FIND_IN_SET(#{it}, category) 
+              </foreach> 
+         </if>
+          order by category asc, game_name asc
+          limit #{sno}, #{rowsPerPage}
+</select> 	
+ 	
+** Date Type 에 출력포맷 지정하기
+=> Oracle  
+	~ ,id, TO_CHAR(regdate,'yyyy/mm/dd/ hh24:mi:ss') regdate, ~~
+=> Mysql 	
+	~ ,id, DATE_FORMAT(regdate, '%Y-%m-%d %H:%i:%s') regdate, ~~
+	~ ,id, DATE_FORMAT(regdate, '%Y년 %m월 %d일 %H시 %i분 %s초') regdate, ~~ 	
+-->
+	<select id="bCheckList" resultType="com.example.demo.domain.BoardDTO">
+		select seq, id, title, 
+			   DATE_FORMAT(regdate, '%Y년 %m월 %d일 %H시 %i분 %s초') regdate, 
+			   cnt, root, step, indent
+		from board
+		<if test="check!=null">
+			where id in 
+			<foreach collection="check" item="it" open="(" close=")" separator=",">
+				#{it}
+			</foreach>
+		</if>
+		order by root desc, step asc
+		limit #{sno}, #{rowsPerPage} 
+	</select>
+	
+	<select id="bCheckRowsCount" resultType="int">
+		select count(*) from board
+		<if test="check!=null">
+			where id in 
+			<foreach collection="check" item="it" open="(" close=")" separator=",">
+				#{it}
+			</foreach>
+		</if>
+	</select>
+
+<!-- ** Board Search Paging 
+=> searchType 에 따라 다른 조건문 작성
+=> 동일한 조건이 count(*) 에도 적용되어야함  
+	1) 기본 조건문 만들기
+	=> sql Tag 로 작성, include Tag 로 call 
+	
+	2) 검색조건 : title 에 spring 이 포함된 글 
+		select * from board
+		where title Like '%spring%' 
+		order .......
+	=> 즉, % + #{keyword} + %  을위한 문자연산 필요함
+		MySql : CONCAT('%',	#{keyword}, '%')
+		Mybatis 구문이 MySql 보다 편리
+	-->
+	<sql id="search">
+	<!-- 1) 조건값 CONCAT('%',	#{keyword}, '%') 처리 -->
+		<if test="keyword!=null">
+			<bind name="keyval" value="'%'+keyword+'%'"/>
+		</if>
+	<!-- 2) Like 조건문 -->
+		<choose>
+			<when test="searchType=='all' and keyword!=null">
+			<!-- id, title, content 에서  keyword 가 포함된 글목록 -->
+				and ( id LIKE #{keyval}
+						OR title LIKE #{keyval} 
+						OR content LIKE #{keyval} ))
+			</when>
+			<when test="searchType=='tc' and keyword!=null">
+			<!-- title, content 에서  keyword 가 포함된 글목록 -->
+				and ( title LIKE #{keyval} OR content LIKE #{keyval} ))
+			</when>
+			<when test="searchType!=null and keyword!=null">
+			<!-- searchType 이 컬럼명인 경우 -->
+				and ${searchType} LIKE #{keyval} )
+			</when>
+			<otherwise>)</otherwise>
+		</choose>
+	</sql>
+	
+	<select id="bSearchList" resultType="com.example.demo.domain.BoardDTO">
+		select * from board
+		where ( seq>0 <include refid="search"></include>
+		order by root desc, step asc
+		limit #{sno}, #{rowsPerPage} 
+	</select>
+	<select id="bSearchRowsCount" resultType="int">
+		select count(*) from board
+		where ( seq>0 <include refid="search"></include>
+	</select>
+
+<!-- ** Board_Paging 
+	=> MySql: ~~ Limit a, b (a개를 제외하고 b개 : a+1 부터 b 개)
+	=> Oracle: ~~ Between a And b (a 번째부터 b 까지)  	-->
+	<select id="bPageList" resultType="com.example.demo.domain.BoardDTO">
+		select * from board
+		order by root desc, step asc
+		limit #{sno}, #{rowsPerPage} 
+	</select>
+	<select id="totalRowsCount" resultType="int">
+		select count(*) from board
+	</select>
+
+	<!-- 1. selectList 	-->
+	<select id="selectList" resultType="com.example.demo.domain.BoardDTO">
+		select * from board Order By root desc, step asc
+	</select>
+	
+	<!-- 2. selectOne: Detail -->
+	<select id="selectOne" resultType="com.example.demo.domain.BoardDTO">
+		select * from board where seq=#{seq}
+	</select>
+	
+<!-- ** selectKey Test 
+=> AutoNumbering 을 편리하게 할 수 있도록 지원
+=> DB작업중 먼저 어떤 키값을 가져와서 증가시켜서 입력하거나 혹은 입력후에 증가된 키값을 가져올 필요가 있을때마다.
+   selectKey Tag를 이용하면 별도의 쿼리로직 없이 해당 메소드에서 일괄처리할 수가 있음.
+   - keyProperty: selectKey구문의 결과가 셋팅될 대상을 지정
+    			  ( 즉, 매개변수로 전달된 dto의 컬럼중 결과가 셋팅될 컬럼 선택 ) 	 
+   - resultType: 결과의 타입.
+   - order: BEFORE 또는 AFTER
+            BEFORE로 설정하면 키를 먼저 조회하고 그 값을 keyProperty 에 셋팅한 뒤 insert 구문실행.
+            AFTER로 설정하면 insert 구문을 실행한 뒤 selectKey 구문 실행.
+            오라클에서는 insert구문 내부에서 일관된 호출형태로 처리한다.
+   - statementType: STATEMENT, PREPARED 또는 CALLABLE중 하나 선택가능.
+           마이바티스에게 Statement, PreparedStatement 또는 CallableStatement를 사용하게 한다.
+           디폴트는 PREPARED.
+	  
+=> Oracle 의 경우:  (select nvl(max(seq),0)+1 from board)  
+-->	
+<!-- 3. insert1: 원글입력
+	=> seq 와 root 동일, cnt=0, step=0, indent=0 
+	=> 그러므로 자동으로 생성되는 seq를 root 에 전달할 필요성 -->
+	<insert id="insert">
+		<selectKey keyProperty="seq" resultType="int" order="BEFORE">
+			select IFNULL(max(seq), 0)+1 from board
+		</selectKey>
+		insert into board( seq,id,title,content,root ) 
+		values ( #{seq},#{id},#{title},#{content},#{seq} )
+	</insert>
+	
+	<!-- 4. insert2: 답글 입력 
+	=> seq 자동생성, root, step, indent 는 dto로 전달, cnt=0
+	=> 성공후 stepUpdate 실행   	-->
+	<insert id="rinsert">
+		<selectKey keyProperty="seq" resultType="int" order="BEFORE">
+			select IFNULL(max(seq), 0)+1 from board
+		</selectKey>
+		insert into board( seq,id,title,content,root,step,indent ) 
+		values ( #{seq},#{id},#{title},#{content},#{root},#{step},#{indent} )
+	</insert>
+	
+	<!-- 5. stepUpdate : step 값 증가 
+	=> 조건 : root 동일 and step >=  and 직전 입력된 새글 제외 
+	=> 그러므로 selectKey 가 필요함
+	-->
+	<update id="stepUpdate">
+		<selectKey keyProperty="seq" resultType="int" order="BEFORE">
+			select IFNULL(max(seq), 0) from board
+		</selectKey>
+		update board set step=step+1
+		where root=#{root} and step>=#{step} and seq!=#{seq}
+	</update>
+	
+	<!-- 6. update -->
+	<update id="update">
+		update board set title=#{title}, content=#{content}, cnt=#{cnt} 
+		where seq=#{seq}
+	</update>
+	
+	<!-- 7. delete 
+		=> 원글(seq==root) :  ~ where root=? (모든 답글도 동시에 삭제)
+		=> 답글(seq!=root) :  ~ where seq=?  	-->
+	<delete id="delete">
+		delete from board where 
+		<if test="seq==root">root=#{seq}</if>
+		<!-- 원글삭제: 동일 root 자료 모두 삭제 -->
+		<if test="seq!=root">seq=#{seq}</if>
+		<!-- 해당 답글만 삭제 -->
+	</delete>
+
+</mapper>
