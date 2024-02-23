@@ -47,7 +47,7 @@ public class MemberController {
 		model.addAttribute("banana", service.selectList());
 		log.info("**axMemberList 성공 **");
 		return "axTest/axMemberList";
-	}
+	}//aximlist
 
 	
 	@Autowired(required = false)
