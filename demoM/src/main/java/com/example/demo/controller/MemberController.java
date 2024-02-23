@@ -41,8 +41,14 @@ public class MemberController {
 	MemberService service;
 	@Autowired
 	PasswordEncoder passwordEncoder; 
-	//= new BCryptPasswordEncoder(); 
-	//-> root~~~.xml에 bean 등록
+	// ** Axios MemberList
+	@GetMapping("/aximlist")
+	public String axiMemberList(Model model) {
+		model.addAttribute("banana", service.selectList());
+		log.info("**axMemberList 성공 **");
+		return "axTest/axMemberList";
+	}
+
 	
 	@Autowired(required = false)
 	JoService jservice;
@@ -234,9 +240,10 @@ public class MemberController {
 		model.addAttribute("banana", service.selectList());
 	} //mList
 	
+	
 	// ** Join Form **********************************
 	@RequestMapping(value="/joinForm", method = RequestMethod.GET)
-	public void joinForm() {
+	public void joinForm(Model model) {
 	} //joinForm
 
 	// ** Join

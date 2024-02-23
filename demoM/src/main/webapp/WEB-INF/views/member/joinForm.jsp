@@ -240,9 +240,9 @@ function inCheck() {
        이 폼이 제출될 때 이 형식을 서버에 알려주며, 
        multipart/form-data로 지정이 되어 있어야 서버에서 정상적으로 데이터를 처리할 수 있다.     
 -->
+<h2>** Spring Boot JoinForm **</h2>
 
-
-<form action="join" method="post" enctype="multipart/form-data">
+<form action="join" method="post"  id="myform"  enctype="multipart/form-data">
 <table>
 	<tr height="40">
 		<td bgcolor="pink"><label for="id">I D </label></td>
@@ -346,8 +346,9 @@ function inCheck() {
 			
 			
 		
-			<input type="reset" value="취소">
-			  
+			<input type="reset" value="취소">&nbsp;&nbsp;
+			<!-- <Axios Join Test -->
+            <span class="textlink" onclick="axiJoin()">axiJoin</span>&nbsp;&nbsp;
 		</td>
 	</tr>
 </table>
