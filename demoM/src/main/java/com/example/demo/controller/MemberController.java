@@ -1,13 +1,10 @@
 package com.example.demo.controller;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -20,17 +17,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import com.example.demo.domain.MemberDTO;
 import com.example.demo.service.JoService;
 import com.example.demo.service.MemberService;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import pageTest.PageMaker;
 import pageTest.SearchCriteria;
-
-
 @Log4j2 //@Log4j -> Boot 에서는 2015년 이후 지원중단
 @AllArgsConstructor // 개별적인 @Autowired 생략가능
 @Controller
@@ -41,6 +34,7 @@ public class MemberController {
 	MemberService service;
 	@Autowired
 	PasswordEncoder passwordEncoder; 
+	
 	// ** Axios MemberList
 	@GetMapping("/aximlist")
 	public String axiMemberList(Model model) {
@@ -48,10 +42,42 @@ public class MemberController {
 		log.info("**axMemberList 성공 **");
 		return "axTest/axMemberList";
 	}//aximlist
-
 	
 	@Autowired(required = false)
 	JoService jservice;
+
+//** Ajax Member_Paging
+//=> ver01 : axmcri 만 구현 (Search 기능만 구현) 
+//=> ver02 : "/axmcheck" 요청도 처리할 수 있도록 구현
+// 	-> mappingName에 "check" 가 포함되어있으면 service를 아래메서드를 처리하도록
+// service.mCheckList(cri), mCheckRowsCount(cri)
+	@GetMapping({"/axmcri","/axmcheck"})
+	public String axmcri(HttpServletRequest request,Model model, 
+			           SearchCriteria cri, PageMaker pageMaker ) {
+		//1) Criteria 처리
+		// => ver01: currPage, rowsPerPage 값들은 Parameter 로 전달되어 자동으로 cri에 set
+		//=> ver02: ver01 + searchType, keyword 도 동일하게 cri에 set
+		cri.setSnoEno(); //sno 계산완료됨 
+	
+		//2) 요청확인 &Service처리
+		String mappingName=
+				request.getRequestURI().substring(request.getRequestURI().lastIndexOf("/")+1);
+		pageMaker.setCri(cri);
+		pageMaker.setMappingName(mappingName);
+		
+		if (mappingName.contains("check")) {
+			// => Check 조건처리
+			model.addAttribute("banana", service.mCheckList(cri));
+			pageMaker.setTotalRowsCount(service.mCheckRowsCount(cri));//Check조건별 rows 갯수
+		}else {
+			//=> Search 조건처리
+			model.addAttribute("banana", service.mPageList(cri));
+			pageMaker.setTotalRowsCount(service.mtotalRowsCount(cri)); //Search 조건별 rows 갯수
+		}
+		//3) View처리 
+		model.addAttribute("pageMaker", pageMaker);
+		return "axTest/axmPageList";
+	} //axmcri
 	
 	//** Lombok @Log4j Test
 	@GetMapping("/log4jTest")
@@ -64,11 +90,6 @@ public class MemberController {
 		log.trace("**Lombok @Log4j Test Error: name="+ name);
 		return "redirect:/";
 	}
-	
-	
-	
-	
-	
 //** ID 중복확인
 	@GetMapping("/idDupCheck")
 	public void idDupCheck(@RequestParam("id")String id, Model model) {

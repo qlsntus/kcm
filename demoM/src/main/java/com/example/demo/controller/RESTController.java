@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.domain.BoardDTO;
 import com.example.demo.domain.JoDTO;
 import com.example.demo.domain.MemberDTO;
 import com.example.demo.domain.UserDTO;
+import com.example.demo.service.BoardService;
 import com.example.demo.service.JoService;
 import com.example.demo.service.MemberService;
 
@@ -115,6 +118,7 @@ public class RESTController {
 	
 	MemberService service;
 	JoService jservice;
+	BoardService bservice;
 	PasswordEncoder passwordEncoder; //DemoConfig에 생성 설정
 	
 	@GetMapping("/hello")
@@ -130,8 +134,8 @@ public class RESTController {
 // 1) Text return 
 //=> http://localhost:8080/spring02/rest/gettext
 	//@GetMapping(value="/getText", produces ="text/html; charset=UTF-8")
-	//@GetMapping(value="/gettext", produces={MediaType.TEXT_PLAIN_VALUE})
-	@GetMapping(value="/gettext")
+	@GetMapping(value="/gettext", produces={MediaType.TEXT_PLAIN_VALUE})
+	//@GetMapping(value="/gettext")
    // => produces 속성
    //  - 해당 메서드 결과물의 MIME Type을 의미 ( UI Content-Type 에 표시됨 )
    //  - 위처럼 문자열로 직접 지정 할수도 있고, 메서드내의 MediaType 클래스를 이용할 수도 있음
@@ -437,16 +441,56 @@ public ResponseEntity<JoDTO> inCheck2(int jno, String captain) {
 		   result =ResponseEntity.status(HttpStatus.BAD_GATEWAY)
 				   .body("~~회원가입 실패 !! 다시하세요~~");
 		   log.info("** rsJoin HttpStatus.BAD_GATEWAY => "+HttpStatus.BAD_GATEWAY);
-		   
 	   }
 		   return result;
-		  
-		
-	
 	   } //rsjoin
+	   
+	   //** Ajax, 반복문에 이벤트 적용하기
+	   //1) idbList(id별 boardList)
+	   @GetMapping("/idblist/{id}")
+   public ResponseEntity<?>idblist(@PathVariable("id") String id) {
+		   
+		   ResponseEntity<?> result= null; 
+		   
+		   List<BoardDTO> list = bservice.idbList(id);
+		   //=> 출력 Data 유/무
+		   if (list !=null && list.size()>0) {
+			   result= ResponseEntity.status(HttpStatus.OK).body(list);
+			   log.info("**idblist HttpStatus.OK => "+HttpStatus.OK);
+		   }else {
+			   result= ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+					   .body("~~출력할 자료가 없습니다~~~");
+			   log.info("**idblist HttpStatus.OK => "+HttpStatus.BAD_GATEWAY);
+		   }
+		   return result;
+	   }//idblist
+	   
+	   // ** axiDelete 
+	   @DeleteMapping("/axidelete/{ii}")
+ public ResponseEntity<?>axidelete(@PathVariable("ii") String id) {	     
+		   //=> 출력 Data 유/무
+		   if (service.delete(id)>0) {
+			   log.info("**idblist HttpStatus.OK => "+HttpStatus.OK);
+			   return new ResponseEntity<String>("**삭제 성공!!**",HttpStatus.OK);
+			   
+		   }else {
+			   log.info("**idblist HttpStatus.OK => "+HttpStatus.BAD_GATEWAY);
+			   return new ResponseEntity<String>("**삭제 실패, Data_NotFound!!**",HttpStatus.BAD_GATEWAY);
+		   }
+	   }//idblist
+	   
+	 
+		   
+		 
 
-
-}
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+} //class
 
 	
 

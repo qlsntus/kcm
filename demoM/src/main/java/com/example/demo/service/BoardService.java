@@ -7,6 +7,11 @@ import com.example.demo.domain.BoardDTO;
 import pageTest.SearchCriteria;
 
 public interface BoardService {
+	
+	//** Ajax : id 별 boardList 출력
+		public List<BoardDTO> idbList(String id) ;
+	
+
 	//** Board Check_List
 	public List<BoardDTO> bCheckList(SearchCriteria cri) ;
 	public int bCheckRowsCount(SearchCriteria cri) ;

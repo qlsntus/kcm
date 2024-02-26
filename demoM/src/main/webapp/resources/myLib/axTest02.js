@@ -60,12 +60,14 @@ function axiJoin() {
 	let formData = new FormData(document.getElementById('myform'));
 	
 	// 2.2) Axios 요청처리
+	// => axios.post(url, data [, congig])
 	let url="/rest/rsjoin";
 	axios.post(url,formData, 
 	{headers:{'Content-Type':'mutipart/form-data'}
 	}).then(response=>{
 		alert(`** join성공 => ${response.data}`);
 		location.reload();
+		//rsLoginf();
 		
 	}).catch(err=>{
 		if(err.response.status=='502') alert("~ 입력 오류!! 다시하세요~~");

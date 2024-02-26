@@ -16,11 +16,22 @@ public class BoardServiceImpl implements BoardService {
 	//BoardDAO dao ;
 	//=> Mybatis 적용
 	BoardMapper mapper;
+	//** Ajax : id 별 boardList 출력
+	
+	
+
+	//** idbList
+	@Override
+	public List<BoardDTO> idbList(String id) {
+		return mapper.idbList(id);
+	}
+
 	//** Board Check_List
 	@Override
 	public List<BoardDTO> bCheckList(SearchCriteria cri) {
 		return mapper.bCheckList(cri);
 	}
+	//** bCheckRowsCount
 	@Override
 	public int bCheckRowsCount(SearchCriteria cri) {
 		return mapper.bCheckRowsCount(cri);
@@ -72,17 +83,19 @@ public int insert(BoardDTO dto) {
 	
 	return mapper.insert(dto);
 }
+//**Update
 @Override
 public int update(BoardDTO dto) {
 	
 	return mapper.update(dto);
 }
-
+//** delete
 @Override
 public int delete(BoardDTO dto) {
 	
 	return mapper.delete(dto);
 }
+
 
 }// class 
 
