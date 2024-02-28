@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>** Window Open **</title>
+  <script>
+  // 1) 다양한 윈도우 열기 사례
+  // => window.open('url','name','속성')
+  // => name: _blank, _parent, _self, _top, name지정(_blank 처럼 새창을 open)
+    onload=function() {
+      // 1.1) newWindow : snowVillage,myWinow,툴바만 표시
+      document.getElementById('win1').onclick=()=>{
+          window.open('./snowVillage.html','myWindow','toolbar=yes');
+      }
+      // 1.2) 현재 Window 에 출력하기 , 속성 지정하지 않기
+      document.getElementById('win2').onclick = function() {
+      window.open('snowVillage.html','_self');
+      }    
+      // 1.3) 이름 없는 새 윈도우에 출력하기 , 속성 '' -> 속성없음(1.2)과 동일 
+      document.getElementById('win3').onclick = function() {
+        window.open('snowVillage.html','_blank','');
+      }	
+      // 1.4) 이름과 속성이 없는 윈도우 출력하기 -> 1.3 과 동일
+      document.getElementById('win4').onclick = function() {
+        //window.open('snowVillage.html'); // 아래와 동일
+        window.open('snowVillage.html','','');
+      }
+      // 1.5) 빈 윈도우 생성하기
+      document.getElementById('win5').onclick = function() {
+        window.open();
+        //동일 -> window.open('','',''); 	window.open('',null,null);
+        
+        //window.open(null,null,null);
+        // 404 -> 요청된 리소스 [/Html02/javaScript05/null]은(는) 가용하지 않습니다
+      }
+      // 1.6) 이름, 위치, 크기를 지정한 새 윈도우 출력하기
+      document.getElementById('win6').onclick = function() {
+        window.open('snowVillage.html','myWindow',
+              'left=10, top=10, width=400, height=300');
+      }
+
+    // 2) 윈도우 이름과 윈도우 Open Test
+	  // => https://www.w3schools.com/ , https://www.naver.com  
+    // => myWinow 에 open 하기
+      document.getElementById('test').onclick = function() {
+        window.open('https://www.w3schools.com/','myWindow');
+      }
+
+    } //onload
+  </script>
+</head>
+<body>
+  <h3><pre>
+    ** Window Open Test **
+    
+    1) 다양한 윈도우 열기 사례
+    <span id="win1">1.1) newWindow : snowVillage,myWindow,툴바만 표시</span> 
+    <span id="win2">1.2) 현재 Window 에 출력하기: 속성  지정하지 않기</span>
+    <span id="win3">1.3) 이름 없는 새 윈도우에 출력하기</span>
+    <span id="win4">1.4) 이름과 속성이 없는 윈도우 출력하기</span>
+    <span id="win5">1.5) 빈 윈도우 생성</span>
+    <span id="win6">1.6) 이름, 위치, 크기를 지정한 새 윈도우 출력하기</span>
+
+    2) 윈도우 이름과 윈도우 Open Test
+	  => 이름 없는 윈도우 계속 열기 (1.3)
+      -> 계속 새 윈도우 Open
+    => 빈 윈도우 계속 열기 (1.5)
+      -> 계속 새 윈도우에 Open	
+    => 이름 있는 윈도우 계속 열기 
+      -> (1.1) 계속 클릭해보면 동일창 에 Open
+      -> <span id="test">NewUrl 적용 Test</span> : 동일창 에 Open
+  </pre></h3> 
+</body>
+</html>

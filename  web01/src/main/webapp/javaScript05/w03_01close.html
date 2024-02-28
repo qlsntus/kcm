@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>** Window Close Test **</title>
+  <script>
+    let newWindow=null;
+    // ** Window Open
+    function load(url) {
+      newWindow=window.open(url,'myWin','left=30, top=30, width=500, height=500');
+    }
+    // ** Window Close
+    function unload() {
+      // => newWindow 의 open 확인 후 close
+      if ( newWindow==null || newWindow.closed ) return;  
+      // => return 을 단독으로 사용하면 현재위치에서 함수종료
+      else newWindow.close();
+      // => newWindow=null 인 상태에서 close 하는경우 
+		  //    Uncaught TypeError: Cannot read properties of null (reading 'close')
+    }
+  </script>
+</head>
+<body>
+  <h3>** Window Close Test **</h3>
+  => 윈도우를 스스로 닫는 경우와 자신이 생성한 윈도우를 닫는 사례<br>
+  <hr> 
+  <a href="javascript:load('w03_02closeChild.html')">newWindow_Open</a><br>      
+  <a href="javascript:unload()">newWindow_Close</a><br>
+  <a href="javascript:window.close()">thisWindow_Close</a>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>** window.location Test **</title>
+<script>
+// 1. location 객체 Test
+	function load() {
+		// ** select 의 value 접근방법 & location 객체
+		// 1) location 객체 직접사용 Test : url로 이동, 히스토리에 기록됨
+		// 1.1) select 의 index 활용
+		let s = document.getElementById('sel'); // select 전달
+		//window.location =  s.options[s.selectedIndex].value;
+		
+		// 1.2) select 의 value 활용
+		//window.location =  s.value;
+		
+		// 2) location 객체의 속성 & 메서드 Test
+		// => href, replace('...'), reload()
+		//location.href=s.value;   // 이동, 히스토리에 기록됨
+		//location.replace(s.value); // 이동, 히스토리에 기록안됨
+		location.reload(); // 새로고침 (f5)
+		//location.reload(true); // 강한 새로고침  
+	} //load
+
+// 2. window event Test
+// => Test1) w03_pos... 에서 실행 후 Test -> onmove 적용안됨(확인 필요함)
+// => Test2) 직접 실행 후 Test -> onmove 적용안됨(확인 필요함)
+window.onmove = function() {
+	// => 적용 안됨 
+	alert(" 위치 이동 했습니다. ~~ ");
+}
+window.onresize = function() {
+	// => 적용됨
+	alert(" 크기가 변경 되었습니다. ~~ ");
+}
+
+</script>
+</head>
+<body>
+<pre><h3>** window.location Test **</h3>
+
+=> window의 내장 객체 : 윈도우에 로드된 웹 페이지의 URL 정보를 나타냄
+=> location : window.location=url (url로 이동, 히스토리에 기록됨)
+=> location 의 메서드 (jq02_03countDown.html 참고)
+	-> href : 속성, 화면전환 (히스토리에 기록 -> 이전페이지로 이동가능)
+	-> replace('...') : 화면전환 (히스토리에 기록안됨 -> 이전페이지로 이동불가능)
+	-> reload() : 일반적인 새로고침, (f5)
+				  컴퓨터의 캐쉬에서 우선 찾고 없으면 서버에서 받아옴
+	-> reload(true) : 강력한 새로고침
+				  캐쉬는 무시하고 무조건 서버에서 받아옴
+				  
+<h3>** 화면 전환 방법 요약 **</h3>   
+1) HTML
+=> meta Tag
+   http-equiv="refresh" content="5;url=http://www.naver.com"
+   ( 5초후 Naver 로 이동 )
+=> a Tag
+=> form 의 submit   
+   
+2) JS
+=> location 객체  
+=> open 메서드	 			  
+</pre>
+<hr>
+* url 선택 : 
+<select id="sel">
+	<option value="https://www.naver.com">Naver</option>
+	<option value="https://www.google.com">Google</option>
+	<option value="https://www.oracle.com">Oracle</option>
+	<option value="https://www.w3schools.com">w3Schools</option>
+	<option value="w06_history.html">HistoryTest</option>
+</select>&nbsp;&nbsp; 
+<button onclick="load()">연결</button>
+
+</body>
+</html>

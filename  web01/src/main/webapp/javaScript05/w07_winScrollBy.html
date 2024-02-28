@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>** Window Auto Scroll Test **</title>
+<script>
+	function startScroll(interval) {
+		//alert("** 함수명 호출 => \n"+ autoScroll);
+		setInterval(autoScroll, interval);
+		// => interval 단위는 1/1000 (초)
+		// => JS에서 함수이름만 사용하면 함수의 코드를 가져옴
+		// setInterval(function() {...}, interval);
+	}
+
+	function autoScroll() {
+		window.scrollBy(0,10);
+		// => 10픽셀씩 세로(vertical)스크롤 이동
+	}
+
+// ** event 적용해보기 **
+	// window.onscroll=function() {
+	// 	alert(' scroll 위치 이동 !!! ');
+	// }
+</script>
+</head>
+<body onload="startScroll(1000)">
+<h3>** Window Auto Scroll Test **</h3>
+<hr>
+<button onclick="history.back()">back()</button>
+<button onclick="history.forward()">forward()</button>
+<hr>
+<h3><pre>
+***  너무 웃겨서...
+같이 웃어요. ^__^ ***
+
+안녕하세요 프랑스 교포 3세입니다...
+
+저 한국에 온 지 몇 년 됐어요...
+
+저 처음에 한국 왔을 때,
+
+한국은 간식도 너무 무서운 거 같았어요.
+
+저 점심먹고 왔더니 과장님이
+
+"입가심으로 개피사탕 먹을래? "했어요.
+
+저 한국사람들 소피 국 먹는거 알았지만 
+
+개 피까지 사탕으로 먹을 줄은 몰랐어요. 
+
+저 드라큐라도 아니고 
+
+무슨 개 피로 입가심 하냐고 싫다고 했더니 
+
+"그럼 눈깔 사탕은 어때?" 하셨어요. 
+
+저 너무 놀라서 "그거 누구꺼냐고?" 했더니,
+
+과장님 씨익 웃으면서,,,, 
+
+"내가 사장꺼 몰래 빼왔어~" 했어요. 
+
+저, 기절했어요~~ 
+
+눈 떠 보니 과장님 저 보면서 
+
+"기력 많이 약해졌다며 몸보신 해야 한다고 
+
+내 집으로 가자" 고 했어요 
+
+그래서 저 너무 불안해서 "무슨 보신이냐?" 했더니... 
+
+과장님 제 어깨를 툭 치시며 
+
+"가자, 가서 우리 마누라 내장탕 먹자" 했어요. 
+
+저 3일간 못 깨어났어요... 
+
+집에 가는 길에서
+
+식당 간판 보고 더 놀랐어요~ 
+
+'할머니 뼈따구 해장국! ' 
+
+미칠뻔 했어요~ 
+
+근데 이거 보고 완전 돌아버렸어요~ 
+
+'할머니 산채 비빔밥 !!!!!!'
+</pre></h3>
+</body>
+</html>
