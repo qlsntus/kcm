@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 //** FunctionalInterface 1
 //=> Function <T, R> 
+//   유일한 추상 메서드 : R apply(T t);
 //   T type 입력받아 R type return
 
 //** 실습
