@@ -103,11 +103,12 @@
 </table>
 </form>
 <br><hr>
-&nbsp;<a href="pwUpdate">Password수정</a>&nbsp;
 <c:if test="${!empty requestScope.message}">
 => ${requestScope.message}<br>
+<hr>
 </c:if>
 <hr>
+&nbsp;<a href="pwUpdate">Password_수정</a><br>
 &nbsp;<a href="/home">Home</a>&nbsp;
 &nbsp;<a href="javascript:history.go(-1)">이전으로</a>&nbsp;
 </body>

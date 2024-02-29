@@ -1,17 +1,18 @@
 package com.example.demo.service;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.domain.JoDTO;
-
-import mapperInterface.JoMapper;
 //** Service
 //=> 요청클래스 와 mapper클래스 사이의 연결(완충지대) 역할
 //=> 요청클래스(컨트롤러) 와 mapper클래스 사이에서 변경사항이 생기더라도 서로 영향   받지않도록해주는 역할
 // 결합도는 낮추고, 응집도는 높인다
+import com.example.demo.entity.Jo;
+import com.example.demo.repository.JoRepository;
+
+import lombok.RequiredArgsConstructor;
 
 //** interface 자동완성 
 //=> Alt + Shift + T  
@@ -19,35 +20,35 @@ import mapperInterface.JoMapper;
 
 
 @Service
+@RequiredArgsConstructor
 public class JoServiceImpl implements JoService {
-	//@Autowired
-	//Jomapper mapper;
+	
+	private final JoRepository repository;
 	
 	// ** selectList
-	JoMapper mapper;
 	@Override
-	public List<JoDTO> selectList() {
-		return mapper.selectList();
+	public List<Jo> selectList() {
+		return repository.findAll();
 	}
 	// ** selectOne
+	
 	@Override
-	public JoDTO selectOne(JoDTO dto) {
-		return mapper.selectOne(dto);
-	}
-	// ** Insert
+	public Jo selectOne(int jno) {
+		Optional<Jo> result=repository.findById(jno);
+		if (result.isPresent()) return result.get();
+		else return null;
+	  }
+	// ** Insert,update
 	@Override
-	public int insert(JoDTO dto) {
-		return mapper.insert(dto);
+	public Jo save(Jo entity) {
+		return repository.save(entity);
 	}
-	// ** Update
-	@Override
-	public int update(JoDTO dto) {
-		return mapper.update(dto);
-	}
+	
 	// ** Delete
 	@Override
-	public int delete(JoDTO dto) {
-		return mapper.delete(dto);
+	public void deleteById(int jno) {
+		repository.deleteById(jno);
 	}
+	
 
 }//class

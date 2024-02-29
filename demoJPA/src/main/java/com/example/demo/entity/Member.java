@@ -14,6 +14,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 //=> 해당클래스가 엔티티(테이블)를 위한 클래스이며, 
 //해당클래스의 인스턴스들은 JPA의 엔티티매니저가 관리하는 엔티티 객체임을 의미함. 
 //DTO 와는 용도를 분리해서 사용할것을 권장함.
@@ -24,10 +28,7 @@ import lombok.NoArgsConstructor;
 @Table(name="member")
 //=> Entity에 해당하는 테이블을 name 속성을 사용하여 매핑함.
 //name 생략시에는 클래스의 이름이 매핑됨
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+
 public class Member {
 	
 	@Id

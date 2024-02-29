@@ -1,22 +1,30 @@
-package com.example.demo.domain;
+package com.example.demo.entity;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
+@Entity
+@Table(name="jo")
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class JoDTO {
-	// ** private 으로 맴버변수 정의
+public class Jo {
+	@Id
 	private int jno;
-	protected String jname;
+	private String jname;
 	private String captain;
-	protected String project;
+	private String project;
 	private String slogan;
 	
-	
+	@Transient
 	private String cname; //필요시 사용
 	
 	// ** 생성자

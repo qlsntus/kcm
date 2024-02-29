@@ -105,6 +105,7 @@
 <br><hr>
 &nbsp;<a href="pwUpdate">Password수정</a>&nbsp;
 <c:if test="${!empty requestScope.message}">
+<hr>
 => ${requestScope.message}<br>
 </c:if>
 <hr>
