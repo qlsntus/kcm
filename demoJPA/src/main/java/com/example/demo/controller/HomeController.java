@@ -13,7 +13,10 @@ import com.example.demo.domain.GuestbookDTO;
 import com.example.demo.domain.PageRequestDTO;
 import com.example.demo.domain.PageResultDTO;
 import com.example.demo.entity.Guestbook;
+import com.example.demo.entity.Testkey;
+import com.example.demo.entity.TestkeyId;
 import com.example.demo.service.GuestbookService;
+import com.example.demo.service.TestkeyService;
 
 import lombok.AllArgsConstructor;
 
@@ -21,7 +24,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class HomeController {
 	GuestbookService service;
-	
+	TestkeyService tservice;
+	//Guest Book
 	@GetMapping("/home")
 	   //@GetMapping(value={"/", "/home"})
 	   // => void : 요청명.jsp 를 viewName 으로 처리함 (home.jsp)
@@ -114,6 +118,106 @@ public class HomeController {
 		}
 		return "redirect:home";
 	}
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	   // ** JPA 복합키 실습 (@IdClass 방법)
+	   @GetMapping("/tinsert")
+	   public String tinsert() {
+	      Testkey entity = Testkey.builder()
+	               .id("green")
+	               .no(1)
+	               .name("김그린")
+	               .count(1)  // JPA save 에서는 MySql에서 정의한 default 1 적용안됨.
+	               .build();
+	      try {
+	         tservice.save(entity);
+	         System.out.println("** Testkey SAVE => "+entity);
+	      } catch (Exception e) {
+	         System.out.println("** SAVE Exception => "+e.toString());
+	      }
+	      return "redirect:home" ;
+	   }
+	   
+	   // => Update
+	   @GetMapping("/tupdate")
+	   public String tupdate() {
+	      // => Test Data 작성
+	      String id="green";
+	      int no=1;
+	      int count=10;
+	      try {
+	         tservice.updateCount(id, no, count);
+	         System.out.println("** Testkey Update count값 누적=> "+id+no+", "+count);
+	      } catch (Exception e) {
+	         System.out.println("** UPDATE Exception => "+e.toString());
+	      }
+	      return "redirect:home" ;
+	   }
+	   
+	   //=> DUPLICATE KEY UPDATE (장바구니 응용)
+	   //   없으면 Save 있으면 Update
+	   @GetMapping("/tdupupdate")
+	   public String tdupupdate() {
+	      // => Test Data 작성
+	      String id="banana";
+	      int no=2;
+	      String name="바나나";
+	      int count=1;
+	      try {
+	         tservice.dupUpdateCount(id, no, name, count);
+	         System.out.println("** Testkey Update count값 누적=> "+id+no+", "+count);
+	      } catch (Exception e) {
+	         System.out.println("** DupUpdate Exception => "+e.toString());
+	      }
+	      return "redirect:home" ;
+	   }
+	   
+	   // ** default 메서드 활용 update
+	   @GetMapping("/tcalcCount")
+	   public String tcalcCount() {
+	      // => Test Data 작성
+	      String id="green";
+	      int no=1;
+	      int count=10;
+	      try {
+	         tservice.calcCount(id, no, count);
+	         System.out.println("** calcCount count+no+100 => "+id+no+", "+count);
+	      } catch (Exception e) {
+	         System.out.println("** calcCount Exception => "+e.toString());
+	      }
+	      return "redirect:home" ;
+	   }
+	   
+	   @GetMapping("/testlist")
+	   public String testlist() {
+	      
+	       List<Testkey> list = tservice.selectList(); 
+	       for ( Testkey t:list ) {
+	          System.out.println(t);
+	       }
+	      return "redirect:home" ;
+	   }
+
+	   @GetMapping("/tdetail")
+	   // => 퀴리스트링으로 Test : /tdetail?id=apple&no=1
+	   public String tdetail(TestkeyId testid) {
+	      System.out.println("tdetail => "+tservice.selectOne(testid));
+	      return "redirect:home" ;
+	   }
+	   
+	   @GetMapping("/tdelete")
+	   // => 퀴리스트링으로 Test : /tdelete?id=green&no=1
+	   public String tdelete(TestkeyId testid) {
+	      try {
+	         tservice.delete(testid);
+	         System.out.println("** tdelete 삭제성공 **");
+	      } catch (Exception e) {
+	         System.out.println("** tdelete Exception => "+e.toString());
+	      }
+	      return "redirect:home" ;
+	   }
+	   
+	   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 }//class
 

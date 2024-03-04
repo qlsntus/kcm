@@ -52,6 +52,12 @@
 &nbsp;<a href="/glist">GList</a>&nbsp;
 &nbsp;<a href="/gupdate">GUdate</a>&nbsp;
 &nbsp;<a href="/gpage">GPage</a>&nbsp;
+<br>
+&nbsp;<a href="/tinsert">TSave</a>&nbsp; 
+&nbsp;<a href="/tupdate">TUpdate</a>&nbsp; 
+&nbsp;<a href="/tdupupdate">TDupUpdate</a>&nbsp; 
+&nbsp;<a href="/tcalcCount">TCalc</a>&nbsp; 
+&nbsp;<a href="/testlist">TList</a>&nbsp; 
 
 </body>
 <hr>

@@ -1,0 +1,344 @@
+*** Optional 사용방법 정리
+=> https://blog.naver.com/izp1012/223095127906
+=> https://esoongan.tistory.com/95
+=> https://mangkyu.tistory.com/203 (올바른 Optioanl 사용법과 문제점)
+
+=> Optional<T>
+* Java8부터 Optional<T>클래스를 사용해 NullPointerException(이하 NPE)를 방지할수 있도록 지원.
+  즉, Optional<T>는 null이 올수 있는 값을 감싸는 Wrapper클래스로, 참조하더라도 NPE가 발생하지 않도록 도와줌.
+
+* 기존의 반환 값 타입 T 에 Optional<T> 를 Wrapping 하여 null 대신 Optional 안에 빈(empty) 타입객체를 돌려주는 기법
+
+* 사용이유
+반환값으로 null 을 return 을 받는 경우, 
+추후 null 반환해준 라인과는 관계없는 코드에서 NPE 가 발생할 수 있어 오류 추적 및 대응이 어렵다.
+즉, 예외 발생 시 예외 스택 전체를 추적하는 비용을 줄일 수 있다.
+
+Optional 안에 빈 타입 객체가 들어있는 경우, Optional 에서 정의된 Method 를 이용하여, 좀더 유연한 핸들링이 가능하다.
+
+그러므로 반환값이 없을 수도 있으며, 클라이언트가 이상황을 특별하게 처리해야하는 경우,
+Optional<T> 를 반환타입으로 사용한다. 
+ 
+* 제공되는 메소드로 복잡한 조건문 없이 NPE를 회피할 수 있도록 해줌
+-> isPresent() : Optional객체에 저장된 값이 null인지 확인
+-> get() : Optional객체에 저장된 값 제공
+
+-> orElseThrow (NullPointerException::new)
+    null이라면 함수형 파라미터로 생성한 예외(NullPointerException)를 발생시킨다.
+ 
+-> orElse(person) 
+   null이면 파라미터(person)를 반환한다. 
+   이때 파라미터(person)은 해당 값이 null이든지 말든지 항상 미리 생성된다.
+ 
+-> orElseGet
+   null이면 파라미터(person)를 반환한다. 
+   이때 파라미터(person)은 해당 값이 null 일때만 생성된다. 즉 미리 생성되지 않는다.
+ 
+=> Optional 단점
+
+a. NullPointerException 대신 NoSuchElementException가 발생함
+  만약 Optional로 받은 변수를 값이 있는지 판단하지 않고 접근하려고 한다면 NoSuchElementException가 발생하게 된다.
+  Null-Safe하기 위해 Optional을 사용하였는데, 값의 존재 여부를 판단하지 않고 접근한다면, 
+  NullPointerException는 피해도 NoSuchElementException가 발생할 수 있다.
+ 
+
+b. 이전에는 없었던 새로운 문제들이 발생함
+  Optional을 사용하면 문제가 되는 대표적인 경우가 직렬화(Serialize)를 할 때이다. 
+  기본적으로 Optional은 직렬화를 지원하지 않아서 캐시나 메세지큐 등과 연동할 때 문제가 발생할 수 있다. 
+  Optional을 사용함으로써 오히려 새로운 문제가 발생할 수 있는 것이다.
+
+c. 코드의 가독성을 떨어뜨림
+
+d. 시간적, 공간적 비용(또는 오버헤드)이 증가함
+
+​
+=> 올바른 Optioanl 사용법
+
+a. Optional 변수에 Null을 할당하지 말아라​
+   Optional 변수 자체가 null 인지 또 검사해야 하는 문제를 야기한다
+
+b. 값이 없을 때 Optional.orElseX()로 기본 값을 반환하라
+   isPresent() 로 검사하고 get() 을 사용하기 보단, orElseGet 방식을 사용하라
+   Java9 부터는 ifPresentOrElse 지원 한다고 한다.
+
+​c. 단순히 값을 얻으려는 목적으로만 Optional을 사용하지 마라​
+  별도의 처리 로직이 필요한 경우에만 사용하여 Optional 처리 비용을 낭비하지 않는자.
+
+​d. 생성자, 수정자, 메소드 파라미터 등으로 Optional을 넘기지 마라
+
+e. Collection의 경우 Optional이 아닌 빈 Collection을 사용하라
+   반드시 처리해야 한다면 그냥 기본 반환타입을 해당Collection 으로 지정하여 반환해라 
+  Optional 의 남용은 자제하자.
+
+
+=============================================================
+*** QueryDSL 사용하기
+
+=> Querydsl - 레퍼런스 문서
+=> http://querydsl.com/static/querydsl/4.0.1/reference/ko-KR/html_single/
+
+=> 이클립스, Maven QueryDSL 설정하기
+     https://lts0606.tistory.com/640  
+     https://blog.naver.com/wldks79/222297480271
+
+=> 적용하기
+     https://tecoble.techcourse.co.kr/post/2021-08-08-basic-querydsl/  
+
+=> JPQL의 Fetch Join (패치 조인)
+     https://blog.naver.com/moranif/223226156721
+
+=> QueryDSL 에서 DTO 적용하기
+     https://blog.naver.com/wjavmtngkr1/222926446084
+     https://blog.naver.com/neem693/223101455966 (QueryDSL 실행구조 와 주요구문및 개념)
+
+=> Projections
+https://blog.naver.com/neem693/223101455966
+
+----------------------------------------------------------------------------
+
+1) 특징
+
+ => 문자가 아닌 자바코드로 쿼리를 작성함으로 컴파일 시점에 오류를 찾을수 있다.
+ => IDE의 자동완성 도움을 받을 수 있음.
+ => 동적 쿼리를 작성하기 편리하다.
+ => 쿼리 작성시 제약조건 등을 메서드추출을 통해 재사용할 수 있다.
+ => 결론
+     JPQL에 비하여 풍부한 체이닝메서드 및 유틸리티 메서드 와 Q클래스를 기반으로 직관적으로 쿼리를 작성함.
+
+
+2) 환경설정 (이클립스, Maven)
+
+=> 메이븐(maven) 환경에서 Q클래스 생성하기
+
+=> pom.xml 파일에  <dependency> 와 플러그인(plugin) 추가
+
+=> 이후, application.properties 에 아래설정 추가
+# Logging Setting
+logging.level.org.hibernate=info 
+----------------------------------------------------------------------------
+=> 이클립스 Restart (필요시) 
+=> Project 우클릭 -. Maven - Update project...
+    ( application.properties 한글 주석 모두 깨질 수 있음 )
+
+=> 위 까지 완료되면 플러그인(plugin) 에 설정한 
+	"target/generated-sources/java" 내의 entity 패키지에
+	Entity 클래스들에 Q라는 접두사가 붙은 형태로
+	Q클래스 가 생성된 것을 확인할 수 있다.
+
+=> Q클래스 또는 Q(쿼리) 타입
+	QueryDSL로 쿼리를 작성할 때, Q 클래스를 사용함으로써 쿼리를 Type-Safe하게 작성할 수 있음.
+
+	반면 QueryDSL은 각종 풍부한 체이닝 메서드와 유틸리티 메서드 및 정적 타입(Q 클래스)을 기반으로 직관적으로 쿼리를 작성합니다.
+
+
+
+=> IDE 의 개발 코드에서 생성된 Q 클래스 파일에 접근 해서 DB 작업 처리
+
+----------------------------------------------------------------------------
+<!-- jpa 관련 2개 : 대부분 생성시 추가함-->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jdbc</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    
+    <!-- querydsl 관련 2개, slf4j -->
+<dependency>
+  <groupId>com.querydsl</groupId>
+  <artifactId>querydsl-apt</artifactId>
+  <version>${querydsl.version}</version>
+  <scope>provided</scope>
+</dependency>
+
+<dependency>
+  <groupId>com.querydsl</groupId>
+  <artifactId>querydsl-jpa</artifactId>
+  <version>${querydsl.version}</version>
+</dependency>
+
+<dependency>
+  <groupId>org.slf4j</groupId>
+  <artifactId>slf4j-log4j12</artifactId>
+  <version>1.6.1</version>
+</dependency>
+
+======================================
+
+ <!-- 요기 부터 입니다!! -->
+    <plugin>
+        <groupId>com.mysema.maven</groupId>
+        <artifactId>apt-maven-plugin</artifactId>
+        <version>1.1.3</version>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>process</goal>
+                </goals>
+                <configuration>
+                    <outputDirectory>target/generated-sources/java</outputDirectory>
+                    <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+    <!-- 요기 까지 입니다!! -->
+
+JPAAnnotationProcessor는 javax.persistence.Entity 애노테이션을 가진 도메인 타입을 찾아서 쿼리 타입을 생성한다.
+도메인 타입으로 Hibernate 애노테이션을 사용하면, 
+APT 프로세서로 com.querydsl.apt.hibernate.HibernateAnnotationProcessor를 사용해야 한다.
+
+mvn clean install 을 실행하면, target/generated-sources/java 디렉토리에 Query 타입이 생성된다.
+이클립스를 사용할 경우, mvn eclipse:eclipse 를 실행하면 target/generated-sources/java 디렉토리가 소스 폴더에 추가된다.
+
+생성된 Query 타입을 이용하면 JPA 쿼리 인스턴스와 쿼리 도메인 모델 인스턴스를 생성할 수 있다.
+
+
+======================================
+
+3) 적용하기
+=> https://tecoble.techcourse.co.kr/post/2021-08-08-basic-querydsl/  
+
+3.1) JPAQueryFactory를 Bean으로 등록하여 프로젝트 전역에서 QueryDSL을 작성할 수 있도록 합니다.
+
+-------------------------------------------------------------
+@Configuration
+public class QueryDslConfig {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Bean
+    public JPAQueryFactory jpaQueryFactory() {
+        return new JPAQueryFactory(entityManager);
+    }
+}
+-------------------------------------------------------------
+
+3.2) JPAQueryFactory Bean 등록
+=> @Configuration 설정화일 (DemoConfig.java) 에 Bean 설정하여
+     프로젝트 전역에서 QueryDSL을 작성할 수 있도록 한다. 
+
+3.3) 커스텀 인터페이스 & 인터페이스 구현 클래스 작성
+=> Naming 규칙 : ~Repository,  ~RepositoryImpl
+    예제) MemberDSLRepository.java , MemberDSLRepositoryImpl.java
+
+=> interface ~Repository : 필요한 추상메서드 정의
+=> 구현클래스 ~RepositoryImpl 
+    :  Q클래스를 static import 함으로써, Q클래스에 미리 정의된 Q클래스 타입 인스턴스 상수를 사용하여
+       쿼리구문 작성.	  
+
+-------------------------------------------------------------
+*** JPQL의 Fetch Join (패치 조인)
+
+=> https://blog.naver.com/moranif/223226156721
+
+=> JPQL에서 성능 최적화를 위해 제공하는 기능이다.
+=> 연관된 엔티티나 컬렉션을 SQL한번에 함께 조회 가능하며
+    일반 Join 구문이 2단계로 처리되는것에 비하여 한번에 로딩함. 
+=> 페치 조인은 N+1문제를 해결 (member 의 갯수 만큼 호출)
+
+=> [ LEFT [OUTER] | INNER ] JOIN FETCH 조인경로
+
+=> JPQL 예시
+	select m from Member m join fetch m.team
+=> SQL 과 비교
+	SELECT m.*, j.* FROM member m INNER JOIN jo j ON m.jno=j.jno
+  
+
+-------------------------------------------------------------
+======================================
+4) QueryDSL 에서 DTO 적용하기
+=> https://blog.naver.com/wjavmtngkr1/222926446084
+
+=> 4 종류 방법 가능
+
+4.1) Setter 접근 - Setter 
+=> MemberDto의 setter 를 호출해서 ,  Dto 의 멤버변수에 injection 해주는 방식.
+=> Projections.bean(~~~)  로 접근
+
+List<MemberDto> result = queryFactory
+    .select(Projections.bean(MemberDto.class,member.username,member.age))
+    .from(member)
+    .fetch();
+     
+-------------------------------------------------------------
+
+4.2) 필드 직접 접근
+=> 필드에 직접 접근해서 값을 injection 하는 방식.
+    때문에 getter , setter 모두 필요없고,
+    MemberDto의 멤버변수에 값이 injection 된다.
+=> Projections.fields(~~~) 로 접근
+ 
+List<MemberDto> result = jpaQueryFactory
+            .select(Projections.fields(MemberDto.class, member.username, member.age))
+            .from(member)
+            .fetch();
+
+-------------------------------------------------------------
+
+4.3) 생성자 사용
+=> 생성자를 사용해서 dto로 값을 반환하는 방식
+=> Projections.constructor(~~~) 로 접근
+=> 단, DTO 에 동일한 구조의 생성자가 반드시 존재해야함.
+
+List<MemberDto> result = jpaQueryFactory
+                .select(Projections.constructor(MemberDto.class, member.username, member.age))
+                .from(member)
+
+-------------------------------------------------------------
+
+*** 별칭 (alias, [ˈeɪliəs] )  적용
+=> DTO의 변수명(name)과 테이블의 컬럼명(username)이 다른 경우에는, 
+     injection이 안되어 null 로 나오므로 별칭을 적용한다.
+
+List<MemberDto> result = jpaQueryFactory
+            .select(Projections.fields(MemberDto.class, 
+                    member.username.as("name"), 
+                    member.age)
+            )
+            .from(member)
+            .fetch();
+
+=> Projections
+https://blog.naver.com/neem693/223101455966
+-------------------------------------------------------------
+
+4.4) @QueryProjection
+ 
+=> DTO의 생성자에 @QueryProjection 을 적용하고 Re_Build 를 하면,
+     DTO도 Q파일이 생성되고, 이 DTO Q파일을 이용해서 코드를 작성하는 방법.
+
+=>  이 방법이 가장 간편하지만, 단점이 있음.
+      DTO에 QueryDSL  관련된 애너테이션이 적용되기 때문에
+      순수한 DTO의 상태를 유지하기는 어렵고, 
+      QueryDSL에 종속적인 관계' 가 된다는 점이다.
+
+=> 적용방법
+-> DTO 생성자에 @ 적용
+   @QueryProjection
+    public MemberDto(String username, int age) {
+        this.username = username;
+        this.age = age;
+    }
+
+-> Re_Build
+
+-> 쿼리 적용
+ public void findDto(){
+        List<MemberDto> result = jpaQueryFactory
+                .select(new QMemberDto(member.username , member.age))
+                .from(member)
+                .fetch();
+    }
+
+-> select문만 보면
+    QMemberDto 를 생성하면서 인자값을 넣어주면 QMemberDto에 자동으로 값이 injection됨.
+
+-------------------------------------------------------------
+
+
+
+  

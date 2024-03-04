@@ -142,6 +142,7 @@ import com.example.demo.entity.Member;
 
 public interface MemberRepository 
                    extends JpaRepository<Member, String>{
+	
 	//1) JPARepository Method Naming 규약
 	// => jno별 Member 출력
 	List<Member> findByJno(int jno);

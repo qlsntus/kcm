@@ -30,7 +30,10 @@ import com.example.demo.entity.Guestbook;
 //      있으면 삭제하고 void 로 정의되어 return값 없음. 
 
 //=> JpaRepository의 save()메서드 동작원리
-//    - 새로운 entity이면 persist() 를 아니면 merge()를 호출
+//    - 새로운 entity이면 persist() 를 
+//    아니면 EntityManger 의 merge()를 호출
+
+// ** EntityManager
 
 public interface GuestbookRepository 
                   extends JpaRepository<Guestbook, Long> {
