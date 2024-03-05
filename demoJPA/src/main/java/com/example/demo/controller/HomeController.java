@@ -20,6 +20,43 @@ import com.example.demo.service.TestkeyService;
 
 import lombok.AllArgsConstructor;
 
+//** JPA 기본사항
+//* 기본특징
+//=> JPA의 가장 큰 특징은 영속성(Persistence)이다.
+//=> JPA를 사용한 DB매핑정보(엔티티)는 메모리(영속 컨텍스트)에 저장되고,
+//이러한 엔티티를 영속객체라 부른다.
+
+//* EntityManager
+//=> 영속 컨텍스트에 접근하여 엔티티에 대한 DB 작업을 제공한다.
+//=> 엔티티의 라이프사이클 관리를 위해 
+//  persist(), remove(), merge(), flush() 등의 Entity Manger API를 제공. 
+//=> 그러나 Spring Data JPA 환경에서는 이를 한단계 더 감싼
+//   save(), delete(), findAll() 등의 JPA Repository API를 제공하기 때문에
+// EM을 직접 다루는 경우가 적어 졌지만, 다양한 상황에 대응 하기위해서는 EM을 다룰수 있어야함.
+//=> https://blog.naver.com/siniphia/223092387343
+//  https://bnzn2426.tistory.com/143
+
+//=> @PersistenceContext 
+// - EntityManager 객체 주입시 사용하는 애너테이션
+// - @Autowired 와 같은 역할, 
+//  그러므로 EntityManager 인터페이스을 구현한 클래스가 생성되어 있어야 주입가능
+// 이 구현 클래스 생성은 xml 또는 Config화일의 @Bean 등록으로 한다.
+//  그러나 SpringBoot JPA 에서는 엔티티 매니저 팩토리 관련 부분을 작성하지 않아도 생성 & 주입 해줌
+// ( DemoConfig.java 참고 )
+
+//* Dialect(사투리,방언) 설정 
+//=> ORM 프레임웤의 가장 큰 특징은 SQL 구문을 자동 생성하는 것이고
+// JPA 에서는 이를 위해 최적화된 SQL 구문을 제공하기 위해  
+// DBMS 마다 Dialect 클래스를 제공함
+// 
+// * Oracle 12g       org.hibernate.dialect.Oracle12cDialect
+// * MySQL 5.x        org.hibernate.dialect.MySQL5Dialect  
+// * DB2              org.hibernate.dialect.DB2Dialect  
+// * Sybase 11.9.2    org.hibernate.dialect.Sybase11Dialect  
+// * Sybase Anywhere  org.hibernate.dialect.SybaseAnywhereDialect    
+
+//------------------------------------------------------------
+
 @Controller
 @AllArgsConstructor
 public class HomeController {
